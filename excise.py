@@ -97,4 +97,17 @@
 
 #让用户输入一个数组，如何最快的找到用户输入数字的索引
 #arr是从小到大排好序的list
+input_num = int(raw_input("Please input number: "))
 arr = [1,3,7,10,22,100,299,1000,2000,30000,40000]
+start = 0
+end = len(arr) - 1
+while True:
+    mid = (start+end)/2
+    mid_num = arr[mid]
+    if input_num < mid_num:
+        end = mid
+    elif input_num > mid_num:
+        start = mid
+    else:
+        print 'find',mid
+        break
