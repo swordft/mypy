@@ -116,15 +116,33 @@
 #        break
 
 #冒泡排序2
-arr = [3,7,18,2,20,99,1,54]
-count = len(arr)-1
-loop_cnt = 0
-for x in range(count):
-    for y in range(x+1,count):
-        if arr[x]>arr[y]:
-            arr[x],arr[y] = arr[y],arr[x]
-        loop_cnt += 1
-    loop_cnt += 1
+#arr = [3,7,18,2,20,99,1,54]
+#count = len(arr)-1
+#loop_cnt = 0
+#for x in range(count):
+#    for y in range(x+1,count):
+#        if arr[x]>arr[y]:
+#            arr[x],arr[y] = arr[y],arr[x]
+#        loop_cnt += 1
+#    loop_cnt += 1
+#
+#print "max number is %s" % arr[-1]
+#print "execute %s times" % loop_cnt
 
-print "max number is %s" % arr[-1]
-print "execute %s times" % loop_cnt
+#数组去重
+#arr = [1,2,3,4,4,12,3,14,3,2,21,12,4111,3333,22,21]
+#arr_uniq = []
+#for i in arr:
+#    if i not in arr_uniq:
+#        arr_uniq.append(i)
+#print arr_uniq
+
+#求两个数组共同的值
+arr1 = [1,2,3,4,2,12,3,2,12,3,14,3,21,2,2,3,4111,22,3333,4]
+arr2 = [2,1,3,2,43,234,454,452,234,14,21,14]
+
+arr_new = []
+for i in arr2:
+    if i in arr1 and i not in arr_new:
+        arr_new.append(i)
+print arr_new
