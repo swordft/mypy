@@ -97,17 +97,34 @@
 
 #让用户输入一个数组，如何最快的找到用户输入数字的索引
 #arr是从小到大排好序的list
-input_num = int(raw_input("Please input number: "))
-arr = [1,3,7,10,22,100,299,1000,2000,30000,40000]
-start = 0
-end = len(arr) - 1
-while True:
-    mid = (start+end)/2
-    mid_num = arr[mid]
-    if input_num < mid_num:
-        end = mid
-    elif input_num > mid_num:
-        start = mid
-    else:
-        print 'find',mid
-        break
+#input_num = int(raw_input("Please input number: "))
+#arr = [1,3,7,10,22,100,299,1000,2000,30000,40000]
+#start = 0
+#end = len(arr) - 1
+#while True:
+#    mid = (start+end)/2
+#    mid_num = arr[mid]
+#    if mid == start:
+#        print "cannot find!"
+#        break
+#    if input_num < mid_num:
+#        end = mid
+#    elif input_num > mid_num:
+#        start = mid
+#    else:
+#        print 'find',mid
+#        break
+
+#冒泡排序2
+arr = [3,7,18,2,20,99,1,54]
+count = len(arr)-1
+loop_cnt = 0
+for x in range(count):
+    for y in range(x+1,count):
+        if arr[x]>arr[y]:
+            arr[x],arr[y] = arr[y],arr[x]
+        loop_cnt += 1
+    loop_cnt += 1
+
+print "max number is %s" % arr[-1]
+print "execute %s times" % loop_cnt
