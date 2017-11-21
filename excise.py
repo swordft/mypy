@@ -138,11 +138,63 @@
 #print arr_uniq
 
 #求两个数组共同的值
-arr1 = [1,2,3,4,2,12,3,2,12,3,14,3,21,2,2,3,4111,22,3333,4]
-arr2 = [2,1,3,2,43,234,454,452,234,14,21,14]
+#arr1 = [1,2,3,4,2,12,3,2,12,3,14,3,21,2,2,3,4111,22,3333,4]
+#arr2 = [2,1,3,2,43,234,454,452,234,14,21,14]
 
-arr_new = []
-for i in arr2:
-    if i in arr1 and i not in arr_new:
-        arr_new.append(i)
-print arr_new
+#arr_new = []
+#for i in arr2:
+#    if i in arr1 and i not in arr_new:
+#        arr_new.append(i)
+#print arr_new
+
+#用户名密码用:分隔，让用户输入用户名和密码，判断能否登录
+#方法一:
+#arr = ['user:pwd','user1:pwd1','user2:123']
+#user = raw_input("input username: ")
+#password = raw_input("input password: ")
+#auth_info = ':'.join([user,password])
+#if auth_info in arr:
+#    print "login success!"
+#else:
+#    print "login error!"
+
+#方法二:
+#arr = ['user:pwd','user1:pwd1','user2:123']
+#user = raw_input('input username: ')
+#password = raw_input('input password: ')
+
+#user_exists = False
+#for u in arr:
+#    if user != u:
+#        break
+#    temp = u.split(':')
+#    if temp[1] == password:
+#        msg = 'success'
+#    else:
+#        msg = 'wrong password!'
+#    print msg
+#    user_exists = True
+#    break
+#if not user_exists:
+#    print 'user not exists'
+
+#用户密码对照表在user.txt文件中，手机号和用户密码都可以登录
+f = open('user.txt')
+info = f.read().split('\n')
+f.close()
+input_user = raw_input('input username: ')
+input_pwd = raw_input('input password: ')
+for u in info:
+    temp = u.split(':')
+    if input_user == temp[1] or input_user == temp[0]:
+        if input_pwd == temp[2]:
+            print 'success!'
+            break
+        else:
+            print 'password error!'
+            break
+    else:
+        print 'user not exists!'
+        break
+
+
