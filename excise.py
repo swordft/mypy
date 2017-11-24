@@ -179,22 +179,82 @@
 #    print 'user not exists'
 
 #用户密码对照表在user.txt文件中，手机号和用户密码都可以登录
-f = open('user.txt')
-info = f.read().split('\n')
+#f = open('user.txt')
+#info = f.read().split('\n')
+#f.close()
+#input_user = raw_input('input username: ')
+#input_pwd = raw_input('input password: ')
+#for u in info:
+#    temp = u.split(':')
+#    if input_user == temp[1] or input_user == temp[0]:
+#        if input_pwd == temp[2]:
+#            print 'success!'
+#            break
+#        else:
+#            print 'password error!'
+#            break
+#    else:
+#        print 'user not exists!'
+#        break
+
+#统计文本文件中所有字符出现的次数
+#f = open('context.txt')
+#context = f.read()
+#f.close()
+
+#res = {}
+#for word in context.split(' '):
+#    res[word] = res.get(word,0) + 1
+#print res
+
+#把上一题的结果，打印前10名
+#f = open('context.txt')
+#context = f.read()
+#f.close()
+#
+#res = {}
+#for word in context.split(' '):
+#    res[word] = res.get(word,0) + 1
+#
+#res_list = []
+#for k in res:
+#    res_list.append([k,res[k]])
+#
+#for x in range(10):
+#    for y in range(x+1,len(res_list)):
+#        if res_list[x][1]<res_list[y][1]:
+#            res_list[x],res_list[y] = res_list[y],res_list[x]
+#                
+#for r in res_list[:10]:
+#    print "word '%s' count is %s" %(r[0],r[1])
+#    
+#    
+
+
+#反转dict，变成 value:key ,然后把值取出，sort排序把前10取出来，然后遍历，去反转后的dict里获取字符
+f = open('context.txt')
+context = f.read()
 f.close()
-input_user = raw_input('input username: ')
-input_pwd = raw_input('input password: ')
-for u in info:
-    temp = u.split(':')
-    if input_user == temp[1] or input_user == temp[0]:
-        if input_pwd == temp[2]:
-            print 'success!'
-            break
-        else:
-            print 'password error!'
-            break
+
+res = {}
+for word in context.split(' '):
+    res[word] = res.get(word,0) + 1
+
+res_rev = {}
+res_list = []
+for k in res:
+    if res[k] in res_rev:
+        res_rev[res[k]].append(k)
     else:
-        print 'user not exists!'
+        res_rev[res[k]] = [k]
+
+key_list = []
+for k in res_rev:
+    key_list.append(k)
+key_list.sort()
+
+for count in range(10):
+    if count>len(res_rev)-1:
         break
-
-
+    value = res_rev[key_list[count]]
+    print "char '%s' count is %s" %(','.join(value),key_list[count])
