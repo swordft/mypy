@@ -232,29 +232,80 @@
 
 
 #反转dict，变成 value:key ,然后把值取出，sort排序把前10取出来，然后遍历，去反转后的dict里获取字符
-f = open('context.txt')
-context = f.read()
-f.close()
+#f = open('context.txt')
+#context = f.read()
+#f.close()
+#
+#res = {}
+#for word in context.split(' '):
+#    res[word] = res.get(word,0) + 1
+#
+#res_rev = {}
+#res_list = []
+#for k in res:
+#    if res[k] in res_rev:
+#        res_rev[res[k]].append(k)
+#    else:
+#        res_rev[res[k]] = [k]
+#
+#key_list = []
+#for k in res_rev:
+#    key_list.append(k)
+#key_list.sort()
+#
+#for count in range(10):
+#    if count>len(res_rev)-1:
+#        break
+#    value = res_rev[key_list[count]]
+#    print "char '%s' count is %s" %(','.join(value),key_list[count])
 
-res = {}
-for word in context.split(' '):
-    res[word] = res.get(word,0) + 1
+# 注册
+# 让用户输入用户名
+# 让用户输入密码
+# 如果用户名存在，不允许注册
+# 否则就添加到文件里，格式 user:password
 
-res_rev = {}
-res_list = []
-for k in res:
-    if res[k] in res_rev:
-        res_rev[res[k]].append(k)
-    else:
-        res_rev[res[k]] = [k]
+#input_name = raw_input('Input your name: ')
+#input_pass = raw_input('Input your password: ')
 
-key_list = []
-for k in res_rev:
-    key_list.append(k)
-key_list.sort()
+#user_dict = {}
+#f = open('user.txt')
+#for line in f.read().split('\n'):
+#    if line == '':
+#        continue
+#    temp = line.split(':')
+#    user_dict[temp[0]] = temp[1]
+#f.close()
 
-for count in range(10):
-    if count>len(res_rev)-1:
-        break
-    value = res_rev[key_list[count]]
-    print "char '%s' count is %s" %(','.join(value),key_list[count])
+#if input_name in user_dict.keys():
+#    print "Your input name already exist,Please use another name!"
+#else:
+#    f = open('user.txt','a')
+#    f.write('\n' + input_name + ':' + input_pass)
+#    f.close()
+#    print "Register success!"
+
+# 输入用户名，密码
+# 如果用户名不存在，报错
+# 存在，修改密码
+
+#input_name = raw_input('Input your name: ')
+#input_pass = raw_input('Input your password: ')
+#user_dict = {}
+#f = open('user.txt')
+#for line in f.read().split('\n'):
+#    if line == '':
+#        continue
+#    temp = line.split(':')
+#    user_dict[temp[0]] = temp[1]
+#f.close()
+#
+#if input_name in user_dict:
+#    f = open('user.txt','a')
+#    f.write('\n' + input_name + ':' + input_pass)
+#    f.close()
+#else:
+#    print "user not exists!"
+#    
+#
+#
