@@ -18,10 +18,16 @@ for line in logs:
 
 middle_ip = "<tr><td>IP</td><td>COUNT</td></tr>"
 middle_stat = "<tr><td>STATUS</td><td>COUNT</td></tr>"
-for k_ip,v_count in ip_dict.items():
-    middle_ip = middle_ip + "<tr><td>" + str(k_ip) + "</td><td>" + str(v_count) + "</td></tr>"
-for k_stat,v_count in stat_dict.items():
-    middle_stat = middle_stat + "<tr><td>" + str(k_stat) + "</td><td>" + str(v_count) + "</td></tr>"
+list_top10_ip = sorted([ (v,k) for k,v in ip_dict.items() ],reverse=True)[:10]
+list_top10_stat = sorted([ (v,k) for k,v in stat_dict.items() ],reverse=True)[:10]
+
+for i in list_top10_ip:
+    ip,ip_count = i[1],i[0]
+    middle_ip = middle_ip + "<tr><td>" + str(ip) + "</td><td>" + str(ip_count) + "</td></tr>"
+    
+for j in list_top10_stat:
+    stat,stat_count = j[1],j[0]
+    middle_stat = middle_stat + "<tr><td>" + str(stat) + "</td><td>" + str(stat_count) + "</td></tr>"
 head = '''<table border="1"'''
 end = "</table>"
 res_ip = head + middle_ip + end
