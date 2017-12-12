@@ -110,31 +110,38 @@
 #      'count':5
 #      }]
 
-def my_sort(num,get_key):
-    for i in range(len(num)):
-        for j in range(i+1,len(num)):
-            if get_key(num[i]) > get_key(num[j]):
-                num[i],num[j]=num[j],num[i]
-    return num
-
+#def my_sort(num,get_key):
+#    for i in range(len(num)):
+#        for j in range(i+1,len(num)):
+#            if get_key(num[i]) > get_key(num[j]):
+#                num[i],num[j]=num[j],num[i]
+#    return num
+#
 #def get_key_from_list(o):
 #    return o[1]
-
+#
 #def get_key_from_dict(o):
 #    return o['count']
-
-L1 = [['192.168.0.1',10],['192.168.0.2',1],['192.168.0.3',5]]
-D1 = [{
-      'ip':'192.168.0.1',
-      'count':10
-      },{
-      'ip':'192.168.0.2',
-      'count':1
-      },{
-      'ip':'192.168.0.3',
-      'count':5
-      }]
+#
+#L1 = [['192.168.0.1',10],['192.168.0.2',1],['192.168.0.3',5]]
+#D1 = [{
+#      'ip':'192.168.0.1',
+#      'count':10
+#      },{
+#      'ip':'192.168.0.2',
+#      'count':1
+#      },{
+#      'ip':'192.168.0.3',
+#      'count':5
+#      }]
 #print my_sort(L1,get_key_from_list)
 #print my_sort(D1,get_key_from_dict)
-print my_sort(L1,lambda o:o[1])
-print my_sort(D1,lambda o:o['count'])
+
+#def operator(name,fn):
+#    return fn(name)
+
+#def sayHello(name):
+#    return 'hello ' + name
+
+#print operator('woniu',lambda x:('hello ' + x))
+
