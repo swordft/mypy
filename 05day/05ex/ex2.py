@@ -8,7 +8,7 @@
 from flask import Flask,request,render_template
 app = Flask(__name__)
 
-def getUserlist():
+def getuserlist():
     ul = []
     with open('user.txt') as f:
         temp = f.read().split('\n')
@@ -18,11 +18,23 @@ def getUserlist():
                 pwd = userinfo.split(':')[1]
                 ul.append([user,pwd])
     return ul
+
+def adduser(user,passwd):
+    
+
+@app.route('/admin')
+def admin():
+    return render_template('login.html')
+#    aduser,adpwd = "admin","pwd"
+#    user = request.args.get('username')
+#    pwd = request.args.get('password')
+#    if user == aduser and adpwd == adpwd:
+#        return redirect('/admin/users')
             
-@app.route('/')
-def index():
+@app.route('/admin/users')
+def user():
     user_list = getUserlist()
-    return render_template('login.html',ulist=user_list)
+    return render_template('users.html',ulist=user_list)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=9092,debug=True)

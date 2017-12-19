@@ -1,0 +1,14 @@
+<table border='1'
+<tr>
+    <td>用户名</td>
+    <td>密码</td>
+</tr>
+{% for user in ulist %}
+<tr>
+    <td>{{ user[0] }}</td>
+    <td>{{ user[1] }}</td>
+</tr>
+{% endfor %}
+</table>
+
+
