@@ -19,14 +19,14 @@ def getuserinfo():
     return ul
 
 def adduser(user,passwd):
-    with open(userlist,"a+") as f:
-        f.write("%s:%s" % (user,passwd))
+    with open(userlist,"a") as f:
+        f.write("%s:%s\n" % (user,passwd))
 
 def deluser(user):
-    #is_exist = checkuser(user)
-    #if is_exist == 1:
-    #    print "User %s is non-exist!" % user
-    #    return 1
+    is_exist = checkuser(user)
+    if is_exist == 1:
+        print "User %s does not exist!" % user
+        return 1
     with open(userlist) as f:
         name_list = f.readlines()
     for name in name_list:
@@ -37,12 +37,12 @@ def deluser(user):
         f_temp.write("")
     with open(userlist,"a") as f:
         for name in name_list:
-            f.write(name,)
-        
+            f.write(name)
+
 def modpass(user,passwd):
     is_exist =checkuser(user)
     if is_exist == 1:
-        print "User %s is non-exist!" % user
+        print "User %s does not exist!" % user
         return 1
     deluser(user)
     adduser(user,passwd) 
@@ -56,4 +56,3 @@ def checkuser(user):
         else:
             return 0
 
-modpass("wjx","xiaofang")

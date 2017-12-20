@@ -6,30 +6,18 @@
 # 2. 登录之后，看到用户和密码列表（存储在文件中），支持添加、删除、修改密码的操作
 
 from flask import Flask,request,render_template
+from api import getuserinfo,adduser,deluser,modpass,checkuser
 app = Flask(__name__)
 
-def getuserlist():
-    ul = []
-    with open('user.txt') as f:
-        temp = f.read().split('\n')
-        for userinfo in temp:
-            if userinfo != '':
-                user = userinfo.split(':')[0]
-                pwd = userinfo.split(':')[1]
-                ul.append([user,pwd])
-    return ul
-
-def adduser(user,passwd):
-    
 
 @app.route('/admin')
 def admin():
     return render_template('login.html')
-#    aduser,adpwd = "admin","pwd"
-#    user = request.args.get('username')
-#    pwd = request.args.get('password')
-#    if user == aduser and adpwd == adpwd:
-#        return redirect('/admin/users')
+    aduser,adpwd = "admin","pwd"
+    user = request.args.get('username')
+    pwd = request.args.get('password')
+    if user == aduser and adpwd == adpwd:
+        return redirect('/admin/users')
             
 @app.route('/admin/users')
 def user():
