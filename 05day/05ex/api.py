@@ -22,16 +22,38 @@ def adduser(user,passwd):
     with open(userlist,"a+") as f:
         f.write("%s:%s" % (user,passwd))
 
-user="fangtao"
-with open(userlist) as f:
-    name_list = f.readlines()
-for name in name_list:
-    temp = name.split(':')[0]
-    if temp == user:
-        name_list.remove(name)
-print name_list
-#for name in name_list:
-#    with open(userlist,"w") as f:
-#        f.write(name,)
-    
+def deluser(user):
+    #is_exist = checkuser(user)
+    #if is_exist == 1:
+    #    print "User %s is non-exist!" % user
+    #    return 1
+    with open(userlist) as f:
+        name_list = f.readlines()
+    for name in name_list:
+        temp = name.split(':')[0]
+        if temp == user:
+            name_list.remove(name)
+    with open(userlist,"w") as f_temp:
+        f_temp.write("")
+    with open(userlist,"a") as f:
+        for name in name_list:
+            f.write(name,)
+        
+def modpass(user,passwd):
+    is_exist =checkuser(user)
+    if is_exist == 1:
+        print "User %s is non-exist!" % user
+        return 1
+    deluser(user)
+    adduser(user,passwd) 
 
+def checkuser(user):
+    with open(userlist) as f:
+        name_list = f.readlines()
+        names = [i.split(":")[0] for i in name_list]
+        if user not in names:
+            return 1
+        else:
+            return 0
+
+modpass("wjx","xiaofang")
