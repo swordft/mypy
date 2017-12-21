@@ -8,14 +8,13 @@
 userlist = "user.txt"
 
 def getuserinfo():
-    ul = []
+    ul = {}
     with open(userlist) as f:
         temp = f.read().split('\n')
         for userinfo in temp:
             if userinfo != '':
-                user = userinfo.split(':')[0]
-                pwd = userinfo.split(':')[1]
-                ul.append([user,pwd])
+                temp = userinfo.split(':')
+                ul[temp[0]] = temp[1]
     return ul
 
 def adduser(user,passwd):
@@ -23,10 +22,6 @@ def adduser(user,passwd):
         f.write("%s:%s\n" % (user,passwd))
 
 def deluser(user):
-    is_exist = checkuser(user)
-    if is_exist == 1:
-        print "User %s does not exist!" % user
-        return 1
     with open(userlist) as f:
         name_list = f.readlines()
     for name in name_list:
@@ -40,19 +35,9 @@ def deluser(user):
             f.write(name)
 
 def modpass(user,passwd):
-    is_exist =checkuser(user)
-    if is_exist == 1:
-        print "User %s does not exist!" % user
-        return 1
     deluser(user)
     adduser(user,passwd) 
 
-def checkuser(user):
-    with open(userlist) as f:
-        name_list = f.readlines()
-        names = [i.split(":")[0] for i in name_list]
-        if user not in names:
-            return 1
-        else:
-            return 0
-
+def checkuser(user,passwd):
+    if user == " " or passwd == " ":
+        return False

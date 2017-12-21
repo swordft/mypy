@@ -3,12 +3,23 @@
     <td>用户名</td>
     <td>密码</td>
 </tr>
-{% for user in ulist %}
+{% for user,passwd in ulist.items() %}
 <tr>
-    <td>{{ user[0] }}</td>
-    <td>{{ user[1] }}</td>
+    <td>{{ user }}</td>
+    <td>{{ passwd }}</td>
 </tr>
 {% endfor %}
 </table>
 
+Add User:
+<form>
+    <input type="text" name="username" placeholder="username">
+    <input type="password" name="password" placeholder="password">
+    <input type="submit" name="subscribe">
+</form>
 
+Delete User:
+<form>
+    <input type="text" name="username" placeholder="username">
+    <input type="submit" name="subscribe">
+</form>
