@@ -39,5 +39,8 @@ def modpass(user,passwd):
     adduser(user,passwd) 
 
 def checkuser(user,passwd):
-    if user == " " or passwd == " ":
+    if len(user)==0 or len(passwd)==0:
         return False
+    return True
+
+deluser('zhubajie')

@@ -10,14 +10,19 @@ from api import getuserinfo,adduser,deluser,modpass,checkuser
 app = Flask(__name__)
 
 
-@app.route('/admin')
+@app.route('/')
 def admin():
-    aduser,adpwd = "fangtao","xiaofang"
+    return render_template('login.html')
+
+@app.route('/auth')
+def auth():
     user = request.args.get('username')
     pwd = request.args.get('password')
-    if user == aduser and pwd == adpwd:
+    if user == "fangtao" and pwd == "xiaofang":
         return redirect('/users')
-    return render_template('login.html')
+    else:
+        return "username or password is error!"
+
             
 @app.route('/users')
 def user():
@@ -33,6 +38,14 @@ def add_user():
     if name in getuserinfo():
         return "user has already exist"
     adduser(name,passwd)
+    return redirect("/users")
+
+@app.route('/deluser')
+def del_user():
+    name = request.args.get("username")
+    if name not in getuserinfo():
+        return "user does not exist!"
+    deluser(name)
     return redirect("/users")
 
 if __name__ == '__main__':
