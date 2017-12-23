@@ -1,0 +1,26 @@
+id(primary key,auto_increment)					系统自动增加
+name(unique,not null)			varchar(20)		登录名
+name_cn(not null)			varchar(32)		中文名
+password(not null)			varchar(64)		密码
+mobile(not null)			varchar(20)		手机
+email(not null)				varchar(20)		邮箱
+role(sa)(not null)			varchar(16)		角色（部门）
+status(not null)			int(10)			正常/锁定（0/1）
+create_time(not null)			varchar(16)		创建时间
+last_time				varchar(16)		最后登录时间
+
+
+create table user(
+id int(10) unsigned not null auto_increment,
+name varchar(20) not null comment '用户名',
+name_cn varchar(32) not null comment '中文名',
+password varchar(64) not null comment '密码',
+mobile varchar(20) not null comment '手机号码',
+email varchar(20) not null comment '电子邮件',
+role varchar(16) not null comment '角色',
+status int(10) not null comment '帐号状态',
+create_time varchar(16) not null comment '创建时间',
+last_time varchar(16) comment '最后登录时间',
+primary key (id),
+unique key name (name))
+engine=MyISAM auto_increment=22 default charset=utf8;
