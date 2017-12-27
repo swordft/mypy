@@ -2,7 +2,6 @@
 	<thead>
 		<tr>
 		<td>用户名</td>
-		<td>中文名</td>
 		<td>手机号</td>
 		<td>邮箱</td>
 		<td>操作</td>
@@ -13,14 +12,17 @@
 		{% for user in users %}
 	<tr>
 		<td>{{ user['name'] }}</td>
-		<td>{{ user['name_cn'] }}</td>
 		<td>{{ user['email'] }}</td>
 		<td>{{ user['mobile'] }}</td>
 		<td>
-		    	<input type="button" name="update" data-id="4" value="更新"> 
-		    	<input type="button" name="del" data-id="4" value="删除">
+			<a href="/user/moduser?id={{ user['id'] }}">更新</a>
+			<a href="/user/moduser?id={{ user['id'] }}">删除</a>
 	        </td>
 	</tr>
 		{% endfor %}
 	</tbody>
 </table>
+<br>
+<form action='/user'>
+	<input type="submit" name="subscribe" value="添加用户">
+</form>

@@ -1,39 +1,34 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 # 作业 用户管理（基于文件存储）
+import MySQLdb as mysql
 
-# 1. 管理员登录（写死账号是admin 密码是pwd）
-# 2. 登录之后，看到用户和密码列表（存储在文件中），支持添加、删除、修改密码的操作
-
-userlist = "user.txt"
+db = mysql.connect(user='root',passwd='xiaofang',db='reboot')
+cur = db.cursor()
 
 def getuserinfo():
-    ul = {}
-    with open(userlist) as f:
-        temp = f.read().split('\n')
-        for userinfo in temp:
-            if userinfo != '':
-                temp = userinfo.split(':')
-                ul[temp[0]] = temp[1]
-    return ul
+    fields = ['name','password','email','mobile']
+    sql = "select %s from users" % ','.join(fields)
+    cur.execute(sql)
+    res = cur.fetchall()
+    users = []
+    for row in res:
+        user = {}
+        for i,k in enumerate(fields):
+	    user[k] = row[i]
+	users.append(user)
+    return users
 
-def adduser(user,passwd):
-    with open(userlist,"a") as f:
-        f.write("%s:%s\n" % (user,passwd))
+def adduser(info):
+    sql = "insert into users(`name`,`password`,`email`,`mobile`) values ('%s','%s','%s','%s')" % (info['name'],info['password'],info['email'],info['mobile'])
+    cur.execute(sql)
 
-def deluser(user):
-    with open(userlist) as f:
-        name_list = f.readlines()
-    for name in name_list:
-        temp = name.split(':')[0]
-        if temp == user:
-            name_list.remove(name)
-    with open(userlist,"w") as f_temp:
-        f_temp.write("")
-    with open(userlist,"a") as f:
-        for name in name_list:
-            f.write(name)
-
+def getone(id):
+    sql = "select name,mobile,email from users where id=%d" %(int(id))
+    cur.execute(sql)
+    res = cur.fetchone()
+    print res
+getone(22)
 def modpass(user,passwd):
     deluser(user)
     adduser(user,passwd) 
