@@ -11,18 +11,18 @@
 	<tbody>
 		{% for user in users %}
 	<tr>
-		<td>{{ user['name'] }}</td>
-		<td>{{ user['email'] }}</td>
-		<td>{{ user['mobile'] }}</td>
+		<td>{{ user.name }}</td>
+		<td>{{ user.email }}</td>
+		<td>{{ user.mobile }}</td>
 		<td>
-			<a href="/user/moduser?id={{ user['id'] }}">更新</a>
-			<a href="/user/moduser?id={{ user['id'] }}">删除</a>
+			<a href="/user/moduser?id={{ user.id }}">更新</a>
+			<a href="/user/deluser?id={{ user.id }}">删除</a>
 	        </td>
 	</tr>
 		{% endfor %}
 	</tbody>
 </table>
 <br>
-<form action='/user'>
-	<input type="submit" name="subscribe" value="添加用户">
+<form action='/user/register'>
+	<input type="submit" name="subscribe" value="注册新用户">
 </form>

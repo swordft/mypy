@@ -25,7 +25,7 @@ def auth():
         if user == "fangtao" and pwd == "xiaofang":
             return redirect('/userlist')
         else:
-            return "username or password is error!"    
+            return render_template('login.html',error="username or password error!")    
     else:
         return render_template('login.html')
 
@@ -35,7 +35,6 @@ def user():
     sql = "select %s from users" % ','.join(fields)
     cur.execute(sql)
     res = cur.fetchall()
-    print res
     users = []
     for row in res:
         user = {}
@@ -44,16 +43,6 @@ def user():
 	users.append(user)
     return render_template('userlist.html',users=users)
 
-#@app.route('/search')
-#def getone():
-#    id = request.form.get('id')
-#    if not id:
-#        id = 0
-#    sql = "select name,mobile,email from users where id=%d" %(int(id))
-#    cur.execute(sql)
-#    res = cur.fetchone()
-#    return render_template('search.html',res=res)
-    
 @app.route('/user/register',methods=['POST','GET'])
 def add_user():
     if request.method == "POST":
@@ -72,14 +61,30 @@ def add_user():
     else:
         return render_template('adduser.html')
 
-@app.route('/user/moduser',methods=['GET'])
+@app.route('/user/moduser',methods=['POST','GET'])
 def mod_user():
+    if request.method == "GET":
+        id = request.args.get('id')
+        fields = ['name','email','mobile']
+        sql = "select %s from users where id=%d" % (','.join(fields),int(id))
+        cur.execute(sql)
+        res = cur.fetchone()
+	user=dict(zip(fields,res))
+        return render_template('modify.html',user=user)
+    else:
+	name = request.form.get("username")
+	email = request.form.get("email")
+	mobile = request.form.get("mobile")
+	sql = "update users set email='%s',mobile='%s' where name='%s'" %(email,mobile,name)
+	cur.execute(sql)
+	return redirect("/userlist")
+
+@app.route('/user/deluser')
+def del_user():
     id = request.args.get('id')
-    sql = "select %s,%s,%s from users where id=%s" % (name,email,mobile,int(id))
+    sql = "delete from users where id=%d" % int(id)
     cur.execute(sql)
-    res = cur.fetchone()
-    return render_template('modify.html',user=res)
-    
+    return redirect("/userlist")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=9092,debug=True)
