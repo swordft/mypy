@@ -31,6 +31,10 @@ def register():
         data["repwd"] = request.form.get('repwd',None)
 	data["create_time"] = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
 
+        # fields,values = [],[]
+	# for k,v in data.items():
+	#     fields.append(k)
+	#     values.append(v)
 	fields = ['name','name_cn','password','mobile','email','role','status','create_time']
 	if not data["name"] or not data["password"] or not data["role"]:
             errmsg = "name or password or role not null"
@@ -42,12 +46,57 @@ def register():
 	try:
 	    sql = "INSERT INTO users (%s) VALUES (%s)" % (','.join(fields),','.join(["'%s'" % data[x] for x in fields]))
 	    cur.execute(sql)
-            return render_template("login.html")
-	except:
-	    errmsg = "insert failed"
+            return redirect("/userinfo?name=%s" % data['name'])
+        except Exception,e:
+	    errmsg = e
 	    return render_template("register.html",error=errmsg)
     else:
         return render_template("register.html")
+
+@app.route('/userinfo')
+def userinfo():
+    where = {}
+    where['id'] = request.args.get('id',None)
+    where['name'] = request.args.get('name',None)
+    if not where['id'] and not where['name']:
+        errmsg = "must have a where"
+	return render_template("index.html",error=errmsg)
+    if where['id'] and not where['name']:
+	condition = 'id = "%(id)s"' % where
+    if where['name'] and not where['id']:
+	condition = 'name = "%(name)s"' % where
+    fields = ['id','name','name_cn','email','mobile']
+    try:
+	sql = "select %s from users where %s" %(','.join(fields),condition)
+	cur.execute(sql)
+	res = cur.fetchone()
+	#user = {}
+	#for i,k in enumerate(fields):
+	#    user[k] = res[i]
+	user = dict((k,res[i]) for i,k in enumerate(fields))
+	return render_template("index.html",user=user)
+    except Exception,e:
+	errmsg = e
+	return render_template("index.html",error=errmsg)
+
+@app.route('/userlist')
+def userlist():
+    users = []
+    fields = ['id','name','name_cn','email','mobile']
+    try:
+	sql = "select %s from users" % ','.join(fields)
+	cur.execute(sql)
+	res = cur.fetchall()
+	for row in res:
+            user = {}
+	    for i,k in enumerate(fields):
+		user[k] = row[i]
+	    users.append(user)
+        return render_template('userlist.html',users=users)
+    except Exception,e:
+	errmsg = e
+	return render_template('userlist.html',error=errmsg)
+	
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=9090,debug=True)
