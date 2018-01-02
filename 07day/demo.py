@@ -8,9 +8,13 @@
 # 2.逻辑端：get请求直接render_template("register.html")，返回空表单，提供填写接口，点击表单按钮时，提交的是POST方式，获取表单
 # 的内容，并将内容插入到数据库
 # 3.数据端：接受逻辑端的SQL请求，将数据写入数据库
+
+
 from flask import Flask,request,render_template,redirect
 import MySQLdb as mysql
 import time
+import json
+import traceback
 
 app = Flask(__name__)
 
@@ -87,16 +91,58 @@ def userlist():
 	sql = "select %s from users" % ','.join(fields)
 	cur.execute(sql)
 	res = cur.fetchall()
-	for row in res:
-            user = {}
-	    for i,k in enumerate(fields):
-		user[k] = row[i]
-	    users.append(user)
+	#for row in res:
+        #    user = {}
+	#    for i,k in enumerate(fields):
+	#        user[k] = row[i]
+	#    users.append(user)
+	users = [dict((k,row[i]) for i,k in enumerate(fields)) for row in res]
         return render_template('userlist.html',users=users)
     except Exception,e:
 	errmsg = e
 	return render_template('userlist.html',error=errmsg)
 	
+@app.route('/update',methods=['GET','POST'])
+def update():
+    if request.method == 'GET':
+	id = request.args.get('id',None)
+	if not id:
+	    errmsg = "must have id"
+	    return render_template("update.html",error=errmsg)
+        fields = ['id','name','name_cn','email','mobile']
+	try:
+	    sql = "select %s from users where id=%s" % (','.join(fields),id)
+	    cur.execute(sql)
+	    res = cur.fetchone()
+	    user = dict((k,res[i]) for i,k in enumerate(fields))
+	    return render_template('update.html',user=user)
+        except Exception,e:
+	    errmsg = e
+	    return render_template('update.html',error=errmsg)
+    else:
+	user = dict(request.form)
+	conditions = ["%s='%s'" % (k,v[0]) for k,v in user.items()]
+        #user = {}
+	#user["id"] = request.form.get('id',None)
+        #user["name"] = request.form.get('name',None)
+        #user["name_cn"] = request.form.get('name_cn',None)
+        #user["mobile"] = request.form.get('mobile',None)
+        #user["email"] = request.form.get('email',None)
+        #user["role"] = request.form.get('role',None)
+        #user["status"] = request.form.get('status',None)
+	try:
+	    #sql = "update users set %s where id=%d" % (','.join(["%s='%s'" %(k,v) for k,v in user.items()]),int(user["id"]))
+	    sql = "update users set %s where id=%s" % (','.join(conditions),user['id'][0])
+	    cur.execute(sql)
+	    return redirect('/userlist')
+        except Exception,e:
+	    errmsg = e
+	    return render_template('update.html',error=errmsg)
+	    
+
+	
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=9090,debug=True)
