@@ -24,33 +24,36 @@ cur = db.cursor()
 @app.route('/register',methods=['GET','POST'])
 def register():
     if request.method == 'POST':
-        data = {}
-        data["name"] = request.form.get('name',None)
-        data["name_cn"] = request.form.get('name_cn',None)
-        data["mobile"] = request.form.get('mobile',None)
-        data["email"] = request.form.get('email',None)
-        data["role"] = request.form.get('role',None)
-        data["status"] = request.form.get('status',None)
-	data["password"] = request.form.get('password',None)
-        data["repwd"] = request.form.get('repwd',None)
+        #data = {}
+        #data["name"] = request.form.get('name',None)
+        #data["name_cn"] = request.form.get('name_cn',None)
+        #data["mobile"] = request.form.get('mobile',None)
+        #data["email"] = request.form.get('email',None)
+        #data["role"] = request.form.get('role',None)
+        #data["status"] = request.form.get('status',None)
+	#data["password"] = request.form.get('password',None)
+        #data["repwd"] = request.form.get('repwd',None)
+	#data["create_time"] = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+	data = dict(request.form)
 	data["create_time"] = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+	print "data=",data
 
         # fields,values = [],[]
 	# for k,v in data.items():
 	#     fields.append(k)
 	#     values.append(v)
 	fields = ['name','name_cn','password','mobile','email','role','status','create_time']
-	if not data["name"] or not data["password"] or not data["role"]:
+	if not data["name"][0] or not data["password"][0] or not data["role"][0]:
             errmsg = "name or password or role not null"
 	    return render_template("register.html",error=errmsg)
 	    
-	if data["password"] != data["repwd"]:
+	if data["password"][0] != data["repwd"][0]:
 	    errmsg = "The two passwords you typed do not match!"
 	    return render_template("register.html",error=errmsg)
 	try:
-	    sql = "INSERT INTO users (%s) VALUES (%s)" % (','.join(fields),','.join(["'%s'" % data[x] for x in fields]))
+	    sql = "INSERT INTO users (%s) VALUES (%s)" % (','.join(fields),','.join(["'%s'" % data[x][0] for x in fields]))
 	    cur.execute(sql)
-            return redirect("/userinfo?name=%s" % data['name'])
+            return redirect("/userinfo?name=%s" % data['name'][0])
         except Exception,e:
 	    errmsg = e
 	    return render_template("register.html",error=errmsg)
@@ -101,6 +104,17 @@ def userlist():
     except Exception,e:
 	errmsg = e
 	return render_template('userlist.html',error=errmsg)
+
+@app.route('/delete')
+def delete():
+    id = request.args.get('id',None)
+    try:
+	sql = "delete from users where id=%s" % id
+	cur.execute(sql)
+	return redirect('/userlist')
+    except Exception,e:
+	errmsg = e
+	return render_template('userlist.html',error=errmsg)
 	
 @app.route('/update',methods=['GET','POST'])
 def update():
@@ -139,10 +153,5 @@ def update():
 	    errmsg = e
 	    return render_template('update.html',error=errmsg)
 	    
-
-	
-
-
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=9090,debug=True)
