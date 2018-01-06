@@ -13,21 +13,21 @@
 # 1. 任何操作都必须先登录，然后通过session记住登录状态
 # 2. 每个操作都会对状态进行判断，登录状态的情况下才会执行动作，否则跳转到登录页面
 # 3. 完整的用户管理的应用场景和技术上完整增删改查
-from flask import Flask,request,render_template,redirect
+from flask import Flask,request,render_template,redirect,session
+from models import *
 import MySQLdb as mysql
 import time
 import json
 import traceback
 
 app = Flask(__name__)
-
-db = mysql.connect(user='root',passwd='xiaofang',db='reboot')
-cur = db.cursor()
-session = {}
+app.secret_key="1q2w3e4R"
+#db = mysql.connect(user='root',passwd='xiaofang',db='reboot')
+#cur = db.cursor()
 
 @app.route('/')
 def index():
-    if not session.get('username',None):
+    if not session.get('name',None):
         return redirect('/login')
     else:
         return redirect('/userlist')
@@ -47,13 +47,11 @@ def register():
 	#data["create_time"] = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
 	data = dict((k,v[0]) for k,v in dict(request.form).items())
 	data["create_time"] = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-	print "data=",data
 
         # fields,values = [],[]
 	# for k,v in data.items():
 	#     fields.append(k)
 	#     values.append(v)
-	fields = ['name','name_cn','password','mobile','email','role','status','create_time']
 	if not data["name"] or not data["password"] or not data["role"]:
             errmsg = "name or password or role not null"
 	    return render_template("register.html",error=errmsg)
@@ -61,9 +59,13 @@ def register():
 	if data["password"] != data["repwd"]:
 	    errmsg = "The two passwords you typed do not match!"
 	    return render_template("register.html",error=errmsg)
+	fields = ['name','name_cn','password','mobile','email','role','status','create_time']
+        values = ','.join(["'%s'" % data[x] for x in fields]) 
+        fields = ','.join(fields)
 	try:
-	    sql = "INSERT INTO users (%s) VALUES (%s)" % (','.join(fields),','.join(["'%s'" % data[x] for x in fields]))
-	    cur.execute(sql)
+	    #sql = "INSERT INTO users (%s) VALUES (%s)" % (','.join(fields),','.join(["'%s'" % data[x] for x in fields]))
+	    #cur.execute(sql)
+            add_user(fields,values)
             #return redirect("/userinfo?name=%s" % data['name'])
             return redirect("/login")
         except Exception,e:
@@ -78,17 +80,19 @@ def login():
         #username = request.form.get('username',None)
 	#password = request.form.get('password',None)
         userinfo = dict((k,v[0]) for k,v in dict(request.form).items())
-	if not userinfo.get('username',None) or not userinfo.get('password',None):
+	if not userinfo.get('name',None) or not userinfo.get('password',None):
 	    errmsg = "must have a name and password"
 	    return render_template("login.html",error=errmsg)
-	sql = "select name,password from users where name='%s'" % userinfo['username']
-	cur.execute(sql)
-	res = cur.fetchone()
+        fields = ['name','password','role']
+        res = check_user(fields,'name',userinfo['name'])
+	#sql = "select name,password from users where name='%s'" % userinfo['username']
+	#cur.execute(sql)
+	#res = cur.fetchone()
 	if not res:
             errmsg = "username does not exists"
             return render_template("login.html",error=errmsg)
 	if userinfo['password'] == res[1]:
-            session['username'] = userinfo['username']
+            session['name'] = userinfo['name']
             return redirect("/userlist")
 	else:
             errmsg = "password error"
@@ -96,45 +100,46 @@ def login():
     else:
 	return render_template("login.html")
 
-@app.route('/userinfo')
-def userinfo():
-    where = {}
-    where['id'] = request.args.get('id',None)
-    where['name'] = request.args.get('name',None)
-    if not where['id'] and not where['name']:
-        errmsg = "must have a where"
-	return render_template("index.html",error=errmsg)
-    if where['id'] and not where['name']:
-	condition = 'id = "%(id)s"' % where
-    if where['name'] and not where['id']:
-	condition = 'name = "%(name)s"' % where
-    fields = ['id','name','name_cn','email','mobile']
-    try:
-	sql = "select %s from users where %s" %(','.join(fields),condition)
-	cur.execute(sql)
-	res = cur.fetchone()
-	#user = {}
-	#for i,k in enumerate(fields):
-	#    user[k] = res[i]
-	user = dict((k,res[i]) for i,k in enumerate(fields))
-	return render_template("index.html",user=user)
-    except Exception,e:
-	errmsg = e
-	return render_template("index.html",error=errmsg)
+#@app.route('/userinfo')
+#def userinfo():
+#    where = {}
+#    where['id'] = request.args.get('id',None)
+#    where['name'] = request.args.get('name',None)
+#    if not where['id'] and not where['name']:
+#        errmsg = "must have a where"
+#	return render_template("index.html",error=errmsg)
+#    if where['id'] and not where['name']:
+#	condition = 'id = "%(id)s"' % where
+#    if where['name'] and not where['id']:
+#	condition = 'name = "%(name)s"' % where
+#    fields = ['id','name','name_cn','email','mobile']
+#    try:
+#	sql = "select %s from users where %s" %(','.join(fields),condition)
+#	cur.execute(sql)
+#	res = cur.fetchone()
+	##user = {}
+	##for i,k in enumerate(fields):
+	##    user[k] = res[i]
+#	user = dict((k,res[i]) for i,k in enumerate(fields))
+#	return render_template("index.html",user=user)
+#    except Exception,e:
+#	errmsg = e
+#	return render_template("index.html",error=errmsg)
 
 @app.route('/userlist')
 def userlist():
     users = []
     fields = ['id','name','name_cn','email','mobile']
     try:
-	sql = "select %s from users" % ','.join(fields)
-	cur.execute(sql)
-	res = cur.fetchall()
-	#for row in res:
-        #    user = {}
-	#    for i,k in enumerate(fields):
-	#        user[k] = row[i]
-	#    users.append(user)
+        res = get_userlist(fields)
+	#sql = "select %s from users" % ','.join(fields)
+	#cur.execute(sql)
+	#res = cur.fetchall()
+	##for row in res:
+        ##    user = {}
+	##    for i,k in enumerate(fields):
+	##        user[k] = row[i]
+	##    users.append(user)
 	users = [dict((k,row[i]) for i,k in enumerate(fields)) for row in res]
         return render_template('userlist.html',users=users)
     except Exception,e:
@@ -145,8 +150,9 @@ def userlist():
 def delete():
     id = request.args.get('id',None)
     try:
-	sql = "delete from users where id=%s" % id
-	cur.execute(sql)
+        del_user(id)
+	#sql = "delete from users where id=%s" % id
+	#cur.execute(sql)
 	return redirect('/userlist')
     except Exception,e:
 	errmsg = e
@@ -161,17 +167,20 @@ def update():
 	    return render_template("update.html",error=errmsg)
         fields = ['id','name','name_cn','email','mobile']
 	try:
-	    sql = "select %s from users where id=%s" % (','.join(fields),id)
-	    cur.execute(sql)
-	    res = cur.fetchone()
+	    #sql = "select %s from users where id=%s" % (','.join(fields),id)
+	    #cur.execute(sql)
+	    #res = cur.fetchone()
+            res = check_user(fields,'id',id)
 	    user = dict((k,res[i]) for i,k in enumerate(fields))
 	    return render_template('update.html',user=user)
         except Exception,e:
 	    errmsg = e
 	    return render_template('update.html',error=errmsg)
     else:
-	user = dict(request.form)
-	conditions = ["%s='%s'" % (k,v[0]) for k,v in user.items()]
+	user = dict((k,v[0]) for k,v in dict(request.form).items())
+        print "user=",user
+	conditions = ','.join(["%s='%s'" % (k,v) for k,v in user.items()])
+        print "conditions=",conditions
         #user = {}
 	#user["id"] = request.form.get('id',None)
         #user["name"] = request.form.get('name',None)
@@ -182,8 +191,9 @@ def update():
         #user["status"] = request.form.get('status',None)
 	try:
 	    #sql = "update users set %s where id=%d" % (','.join(["%s='%s'" %(k,v) for k,v in user.items()]),int(user["id"]))
-	    sql = "update users set %s where id=%s" % (','.join(conditions),user['id'][0])
-	    cur.execute(sql)
+	    #sql = "update users set %s where id=%s" % (','.join(conditions),user['id'][0])
+	    #cur.execute(sql)
+            update_user(conditions,user['id']) 
 	    return redirect('/userlist')
         except Exception,e:
 	    errmsg = e
