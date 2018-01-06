@@ -4,15 +4,37 @@
 	<title>用户管理系统</title>
 </head>
 <body>
-<form action="/login" method='POST'>
-    Username:<input type="text" name="username"><br>
-    Password:<input type="password" name="password"><br>
-    <input type="submit" value="登录">
-</form>
-<div>
+    <!--<form id="loginForm" action="/login" method='POST'> <-->
+    <form id="loginForm">
+        <input id="name" type="text" name="name" placeholder="username"><br />
+        <input id="password" type="password" name="password" placeholder="password"><br />
+        <input id="loginbtn" type="submit" value="登录">
+    </form>
     {% if error %}
-	<p style="color:red">{{ error }}</p>
+        <div style="color:red">
+	    {{ error }}
+        </div>
     {% endif %}
-</div>
+<script src="/static/jquery/jquery-3.2.1.min.js"></script>
+
+<script>
+//alert("welcome jquery")
+$('#loginbtn').on('click',function(){
+    var str = $('#loginForm').serialize()
+    console.log(str)
+    $.post("/login",str,function(data){
+        console.log(data)
+        data = JSON.parse(data)
+        console.log(data)
+        if (data['code']==0){
+            alert(data['error'])
+            location.href="/userlist"
+        }else{
+            $('#error').html(data['error'])
+        }
+    })
+    return false
+})
+</script>
 </body>
 </html>
