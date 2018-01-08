@@ -12,8 +12,11 @@ def check_user(fields,col,value):
     res = cur.fetchone()
     return res
 
-def get_userlist(fields):
-    sql = "select %s from users" % ','.join(fields)
+def get_userlist(fields,*id):
+    if not id:
+        sql = "select %s from users" % ','.join(fields)
+    else:
+        sql = "select %s from users where id=%s" % (','.join(fields),id[0])
     cur.execute(sql)
     res = cur.fetchall()
     return res
@@ -26,7 +29,7 @@ def del_user(id):
     sql = "delete from users where id=%s" % id
     cur.execute(sql)
 
-def update_user(id,conditions):
+def update_user(conditions,id):
     sql = "update users set %s where id=%s" % (conditions,id)
     cur.execute(sql)
 
