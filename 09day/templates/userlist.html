@@ -1,0 +1,30 @@
+<table border='1'>
+	<thead>
+		<tr>
+		<td>用户名</td>
+		<td>中文名</td>
+		<td>邮箱</td>
+		<td>手机号</td>
+                <td>角色</td>
+                <td>帐号状态</td>
+		<td>操作</td>
+	        </tr>
+	</thead>
+	<tbody>
+	        {% for user in users %}
+	<tr>
+		<td>{{ user.name }}</td>
+		<td>{{ user.name_cn }}</td>
+		<td>{{ user.email }}</td>
+		<td>{{ user.mobile }}</td>
+		<td>{{ user.role }}</td>
+		<td>{{ user.status }}</td>
+		<td><a href="/update?id={{ user.id }}"><input type="button" name="update" data-id='{{ user.id }}' value="更新"></a>
+                {% if role=="admin" %}
+		    <a href="/delete?id={{ user.id }}"><input type="button" name="delete" data-id='{{ user.id }}' value="删除"></a>
+                {% endif %}
+		</td>
+		{% endfor %}
+	</tr>
+	</tbody>
+</table>

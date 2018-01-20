@@ -1,0 +1,28 @@
+<html>
+<body>
+<form id="addForm" action='/register' method="POST" accept-charset="UTF-8">
+    用户名：<input type="text" name="name"><br>
+    中文名：<input type="text" name="name_cn"><br>
+    手机号：<input type="text" name="mobile"><br>
+    邮箱号：<input type="text" name="email"><br>
+    角色：<select name="role">
+                <option value="admin">管理员</option>
+                <option value="common_user">普通用户</option>
+        </select><br>
+    状态：<select name="status">
+                <option value="Normal">正常</option>
+                <option value="Close">禁用</option>
+        </select><br>
+    密码：<input type="password" name="password"><br>
+    重复密码：<input type="password" name="repwd"><br>
+    <input type="submit" name="subscribe" value="用户注册">
+    <input type="submit" name="exit" value="退出">
+</form>
+
+<div>
+    {% if error %}
+        <p style="color:red">{{ error }}</p>
+        {% endif %}
+</div>
+</body>
+</html>

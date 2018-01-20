@@ -20,6 +20,27 @@
 #     html(): 操作元素
 #     attr(): 操作属性
 
+# 常用的动作
+# $(选择器).html(value)     获取或设置html标签值
+# $(选择器).val(value)     获取或设置表单标签值
+# $(选择器).attr(value)     获取或设置属性标签值
+# $(选择器).css(value)     获取或设置标签样式值
+
+# 1. id选择器和class选择器是最常用的两种选择器
+# 2. id选择器的id在页面是唯一的标识，适用于某一个特定元素的定义
+# 3. class选择器，是同一类元素共用属性，适用于相同类型元素批量的定义
+
+
+from flask import Flask,request,render_template,redirect,session
+import MySQLdb as mysql
+import time
+import json
+import traceback
+
+app = Flask(__name__)
+app.secret_key="1q2w3e4R"
+
+
 from flask import Flask,request,render_template,redirect,session
 import MySQLdb as mysql
 import time

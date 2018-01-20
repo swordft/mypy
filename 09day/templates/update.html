@@ -1,0 +1,52 @@
+<div>
+    {% if user %}
+    <form action='/update' method="POST" accept-charset="UTF-8">
+        <input type="hidden" id='id' name="id" value="{{ user.id }}">
+        <div>
+            <label>用户名：</label>
+	    <input id="name" type="text" name="name" value="{{ user.name }}">
+        </div>
+        <div>
+            <label>中文名：</label>
+            <input id="name_cn" type="text" name="name_cn" value="{{ user.name_cn }}">
+        </div>
+        <div>
+            <label>手机号：</label>
+            <input id="mobile" type="text" name="mobile" value="{{ user.mobile }}">
+        </div>
+        <div>
+            <label>邮箱号：</label>
+            <input id="email" type="text" name="email" value="{{ user.email }}">
+        </div>
+        <div>
+            <label>密码：</label>
+            <input id="email" type="password" name="password" value="{{ user.password }}">
+        </div>
+        <div>
+            <label>重复密码：</label>
+            <input id="email" type="password" name="repwd" value="{{ user.password }}">
+        </div>
+        {% if role=="admin" %}
+        <div>
+	    <label>角色：</label>
+	    <select id="role" name="role">
+                <option value="common_user">普通用户</option>
+                <option value="admin">管理员</option>
+            </select>
+        </div>
+        <div>
+            <label>状态：</label>
+            <select id="status" name="status">
+                <option value="Normal">正常</option>
+                <option value="Close">禁用</option>
+            </select>
+        </div>
+        {% endif %}
+        <input type="submit" value="更新用户">
+    </form>
+    {% endif %}
+    
+    {% if error %}
+    <p style="color:red">{{ error }}</p>
+    {% endif %}
+</div>
