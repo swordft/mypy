@@ -30,6 +30,10 @@
 # 2. id选择器的id在页面是唯一的标识，适用于某一个特定元素的定义
 # 3. class选择器，是同一类元素共用属性，适用于相同类型元素批量的定义
 
+# 更新第一步：
+# 1. get请求，返回一空的表单html，我们需要通过ajax的getjson请求getbyid这个逻辑端拿到数据，然后将数据渲染到这个空表单中
+# 2. post请求，ajax的post请求，逻辑端返回json串
+
 
 from flask import Flask,request,render_template,redirect,session
 import MySQLdb as mysql
@@ -52,6 +56,11 @@ app.secret_key="1q2w3e4R"
 
 db = mysql.connect(user='root',passwd='xiaofang',db='reboot')
 cur = db.cursor()
+
+@app.route('/index')
+def index():
+    user = {'id':1,'name':'wd','age':'18'}
+    return render_template('ajax.html',user=user)
 
 @app.route('/login',methods=['POST','GET'])
 def login():
@@ -99,18 +108,70 @@ def userlist():
 	errmsg = e
 	return render_template('userlist.html',error=errmsg)
 
-@app.route('/delete')
-def delete():
-    if not session.get('name',None):
-        return redirect('/login')
-
 @app.route('/logout')
 def logout():
     session.pop('name')
     return redirect('/login')
 
+@app.route('update',methods=['GET','POST'])
+def update():
+    if not session.get('name',None):
+        return redirect('/login')
+    name = session['name']
+    role = session['role']
+    info = {'name':name,'role':role}
+    if request.method == 'POST':
+        data = dict(request.form)
+        data = dict((k,v[0]) for k,v in data.items())
+        if role != 'admin':
+            fields = ['id','name_cn','mobile','email']
+            data = dict((f,data[f]) for f in fields)
+            conditions = ["%s='%s'" % (k,v) for k,v in data.items()]
+        try:
+            sql = "update users set %s where id=%s" % (','.join(conditions),data['id'])
+            cur.execute(sql)
+            return json.dumps({"code":0,"result":"update success"})
+        else:
+            uid = request.args.get('id')
+            return render_template('update.html',uid=uid,info=info)
 
+@app.route('/getbyid')
+def getbyid():
+    if not session.get('name',None):
+        return redirect('/login')
+    id = request.args.get('id')
+    if not id:
+        return json.dumps({"code":1,"errmsg":"must have a condition"})
+    condition = 'id="%s"' % id
+    fields = ['id','name','name_cn','email','mobile','role','status']
+    try:
+        sql = "select %s from users where %s" % (','.join(fields),condition)
+        cur.execute(sql)
+        res = cur.fetchone()
+        user = {}
+        user = dict((k,res[i]) for i,k enumerate(fields))
+        return json.dumps({"code":0,"result":user})
+    except:
+        return json.dumps({"code":1,"errmsg":"select userinfo failed"})
 
+@app.route('/delete',methods=['GET'])
+def delete():
+    if not session.get('name',None):
+        return redirect('/login')
+    role = session['role']
+    if role != 'admin':
+        return json.dumps({'code':1,'errmsg':"you are not admin,no privilege"})
+    id = request.args.get('id',None)
+    if not id:
+        errmsg = "must have id"
+        return render_template("userlist.html",result=errmsg)
+    try:
+        sql = "delete from users where id=%s" % id
+        cur.execute(sql)
+        return redirect('/userlist')
+    except:
+        errmsg = "delete failed"
+        return render_template("userlist.html",result=errmsg)
 
 
 
