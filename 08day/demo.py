@@ -92,19 +92,21 @@ def login():
 	    return render_template("login.html",error=errmsg)
         fields = ['id','name','password','role','status']
         res = check_user(fields,'name',userinfo['name'])
+	if not res:
+            errmsg = "username does not exists"
+            return render_template("login.html",error=errmsg)
         res = dict((k,res[i]) for i,k in enumerate(fields))
 	#sql = "select name,password from users where name='%s'" % userinfo['username']
 	#cur.execute(sql)
 	#res = cur.fetchone()
-	if not res:
-            errmsg = "username does not exists"
-            return render_template("login.html",error=errmsg)
 	if userinfo['password'] == res['password']:
             if res['status'] != 'Normal':
                 errmsg = "account locked,please contact your administrator"
 	        return render_template("login.html",error=errmsg)
             session['id'] = res['id']
+            session['name'] = res['name']
             session['role'] = res['role']
+            print "session=",session
             return redirect("/userlist")
 	else:
             errmsg = "password error"

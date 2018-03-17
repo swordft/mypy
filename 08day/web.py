@@ -16,6 +16,12 @@ app.secret_key="1q2w3e4R"
 db = mysql.connect(user='root',passwd='xiaofang',db='reboot')
 cur = db.cursor()
 
+@app.route('/')
+def index():
+    if not session.get('name',None):
+        return redirect('/login')
+    return redirect('/userlist')
+    
 @app.route('/login',methods=['POST','GET'])
 def login():
     if request.method == "POST":
@@ -42,6 +48,12 @@ def login():
     else:
         return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    session.pop('name')
+    session.pop('role')
+    return redirect('/login')
+
 @app.route('/userlist')
 def userlist():
     if not session.get('name',None):
@@ -58,20 +70,21 @@ def userlist():
 	errmsg = e
 	return render_template('userlist.html',error=errmsg)
 
-@app.route('/delete')
+@app.route('/delete',methods=['GET'])
 def delete():
     if not session.get('name',None):
         return redirect('/login')
-
-@app.route('/logout')
-def logout():
-    session.pop('name')
-    return redirect('/login')
-
-
-
-
-
-
+    id = request.args.get('id',None)
+    if not id:
+        errmsg = "must have id"
+        return render_template("userlist.html",error=errmsg)
+    try:
+        sql = "delete from users where id = %s" % id
+        cur.execute(sql)
+        return redirect('/userlist')
+    except Exception,e:
+        errmsg = e
+        return render_template("userlist.html",error=errmsg)
+    
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=9092,debug=True)
