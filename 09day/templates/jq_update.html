@@ -1,18 +1,18 @@
 <div>
     {% if user %}
-    <form action='/update' method="POST" accept-charset="UTF-8">
-        <input type="hidden" id='id' name="id" value="{{ user.id }}">
+    <form accept-charset="UTF-8">
+        <input type="hidden" id='id' name="id">
         <div>
             <label>用户名：</label>
-	    <input id="name" type="text" name="name" value="{{ user.name }}">
+	    <input id="name" type="text" name="name">
         </div>
         <div>
             <label>中文名：</label>
-            <input id="name_cn" type="text" name="name_cn" value="{{ user.name_cn }}">
+            <input id="name_cn" type="text" name="name_cn">
         </div>
         <div>
             <label>手机号：</label>
-            <input id="mobile" type="text" name="mobile" value="{{ user.mobile }}">
+            <input id="mobile" type="text" name="mobile">
         </div>
         <div>
             <label>邮箱号：</label>

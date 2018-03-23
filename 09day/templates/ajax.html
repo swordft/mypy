@@ -1,6 +1,5 @@
 <html>
 <body>
-<p id='errmsg'></p>
 <table id="utable" border='1'>
     <thead>
         <tr>
@@ -12,17 +11,18 @@
     <tbody>
     </tbody>
 </table>
+<p id='errmsg'></p>
 
-<form id="loginForm">
+<!--<form id="loginForm">
     <input id="name" type="text" name="name" placeholder="username">
     <input id="password" type="password" name="password" placeholder="password">
     <input id="loginbtn" type="submit" value="登录">
-</form>
+</form><-->
 
 <script src="/static/jquery/jquery-3.2.1.min.js"></script>
 <!--<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"><-->
 <script>
-$.getJSON('/list',function(data){
+$.getJSON('/userlist',function(data){
     console.log(data)
     if (data['code'] == 0){
         var str = ""
@@ -39,10 +39,10 @@ $.getJSON('/list',function(data){
     }
 })
 
-$('#loginbtn').click(function(){
+/*$('#loginbtn').click(function(){
     var str = $('#loginForm').serialize()
     console.log(str)
-    $.post("/add",str,function(data){
+    $.post("/login",str,function(data){
         console.log(data)
         data = JSON.parse(data)
         console.log(data)
@@ -53,7 +53,7 @@ $('#loginbtn').click(function(){
         }
     })
     return false
-})
+})*/
 </script>
 </body>
 </html>

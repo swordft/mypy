@@ -1,22 +1,56 @@
 <html>
 <body>
-<form id="addForm" action='/register' method="POST" accept-charset="UTF-8">
-    用户名：<input type="text" name="name"><br>
-    中文名：<input type="text" name="name_cn"><br>
-    手机号：<input type="text" name="mobile"><br>
-    邮箱号：<input type="text" name="email"><br>
-    角色：<select name="role">
-                <option value="admin">管理员</option>
-                <option value="common_user">普通用户</option>
+<form id="addForm" accept-charset="UTF-8">
+    <div>
+        <label>用户名:</label>
+        <input id='name' type="text" name="name"><br>
+    </div>
+    
+    <div>
+        <label>中文名:</label>
+        <input id='name_cn' type="text" name="name_cn"><br>
+    </div>
+    
+    <div>
+        <label>手机号:</label>
+        <input id='mobile' type="text" name="mobile"><br>
+    </div>
+    
+    <div>
+        <label>邮箱号:</label>
+        <input id='email' type="text" name="email"><br>
+    </div>
+    
+    <div>
+        <label>角色:</label>
+        <select id='role' name="role">
+            <option value="admin">管理员</option>
+            <option value="common_user">普通用户</option>
         </select><br>
-    状态：<select name="status">
-                <option value="Normal">正常</option>
-                <option value="Close">禁用</option>
+    </div>
+    
+    <div>
+        <label>状态:</label>
+        <select id='status' name="status">
+            <option value="Normal">正常</option>
+            <option value="Close">禁用</option>
         </select><br>
-    密码：<input type="password" name="password"><br>
-    重复密码：<input type="password" name="repwd"><br>
-    <input type="submit" name="subscribe" value="用户注册">
-    <input type="submit" name="exit" value="退出">
+    </div>
+    
+    <div>
+        <label>密码:</label>
+        <input id='password' type="password" name="password"><br>
+    </div>
+    
+    <div>
+        <label>重复密码:</label>
+        <input id='repwd' type="password" name="repwd"><br>
+    </div>
+    
+    <div>
+        <button id='updatebtn' type='submit'>更新信息</button>
+        <button>退出</button>
+    </div>
 </form>
 
 <div>
