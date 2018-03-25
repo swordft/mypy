@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('jq_login.html')
+    return render_template('new_login.html')
 
 @app.route('/userlist')
 def list():
@@ -37,4 +37,4 @@ def login():
         return json.dumps({'code':1,'error':msg})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=9090,debug=True)
+    app.run(host='0.0.0.0',port=9092,debug=True)

@@ -38,6 +38,11 @@
 # 1. 将源文件中引用的静态文件全部按照源站的路径创建下载
 # 2. 有选择的拷贝代码
 # 3. 把自己的业务逻辑替换进来
+
+# 作业：
+# 1. 完成ajax对用户添加、更新、删除的操作
+# 2. 套一套漂亮的界面
+
 from flask import Flask,request,render_template,redirect,session
 import MySQLdb as mysql
 import time
@@ -50,10 +55,10 @@ app.secret_key="1q2w3e4R"
 db = mysql.connect(user='root',passwd='xiaofang',db='reboot')
 cur = db.cursor()
 
-@app.route('/index')
-def index():
-    user = {'id':1,'name':'wd','age':'18'}
-    return render_template('ajax.html',user=user)
+#@app.route('/index')
+#def index():
+#    user = {'id':1,'name':'wd','age':'18'}
+#    return render_template('ajax.html',user=user)
 
 @app.route('/login',methods=['POST','GET'])
 def login():
@@ -61,29 +66,29 @@ def login():
         data = dict((k,v[0]) for k,v in dict(request.form).items())
         if not data.get('name',None) or not data.get('password',None):
             errmsg = "name or password not null"
-            #return render_template('login.html',error=errmsg)
-            return json.dumps({'code':'1','error':errmsg})
+            return render_template('new_login.html',error=errmsg)
+            #return json.dumps({'code':'1','error':errmsg})
         fields = ['name','password','role']
         sql = "select %s from users where name='%s'" % (','.join(fields),data['name'])
         cur.execute(sql)
         res = cur.fetchone()
         if not res:       #如果这个用户在数据库中不存在，返回的结果就是res=(())
             errmsg = "%s is not exist" % data['name']
-            return json.dumps({'code':1,'error':errmsg})
-            #return render_template('login.html',error=errmsg)
+            #return json.dumps({'code':1,'error':errmsg})
+            return render_template('new_login.html',error=errmsg)
         user = {}
         user = dict((k,res[i]) for i,k in enumerate(fields))
         if user['password'] != data['password']:
             errmsg = "password is wrong"
-            return json.dumps({'code':'1','error':errmsg})
-            #return render_template('login.html',error=errmsg)
+            #return json.dumps({'code':'1','error':errmsg})
+            return render_template('new_login.html',error=errmsg)
         else:
             session['name'] = user['name']
             session['role'] = user['role']
-            #return redirect('/userlist')
-            return json.dumps({'code':'0','error':"login success"})
+            return redirect('/userlist')
+            #return json.dumps({'code':'0','error':"login success"})
     else:
-        return render_template('jq_login.html')
+        return render_template('new_login.html')
 
 @app.route('/userlist')
 def userlist():
@@ -96,59 +101,59 @@ def userlist():
 	cur.execute(sql)
 	res = cur.fetchall()
 	users = [dict((k,row[i]) for i,k in enumerate(fields)) for row in res]
-        return render_template('userlist.html',users=users)
+        return render_template('ajax.html',users=users)
     except Exception,e:
 	errmsg = e
-	return render_template('userlist.html',error=errmsg)
+	return render_template('ajax.html',error=errmsg)
 
 @app.route('/logout')
 def logout():
     session.pop('name')
     return redirect('/login')
 
-@app.route('update',methods=['GET','POST'])
-def update():
-    if not session.get('name',None):
-        return redirect('/login')
-    name = session['name']
-    role = session['role']
-    info = {'name':name,'role':role}
-    if request.method == 'POST':
-        data = dict(request.form)
-        data = dict((k,v[0]) for k,v in data.items())
-        if role != 'admin':
-            fields = ['id','name_cn','mobile','email']
-            data = dict((f,data[f]) for f in fields)
-            conditions = ["%s='%s'" % (k,v) for k,v in data.items()]
-            try:
-                sql = "update users set %s where id=%s" % (','.join(conditions),data['id'])
-                cur.execute(sql)
-                return json.dumps({"code":0,"result":"update success"})
-            except Exception,e:
-	         errmsg = e
-	         return render_template('update.html',error=errmsg)
-        else:
-            uid = request.args.get('id')
-            return render_template('update.html',uid=uid,info=info)
-
-@app.route('/getbyid')
-def getbyid():
-    if not session.get('name',None):
-        return redirect('/login')
-    id = request.args.get('id')
-    if not id:
-        return json.dumps({"code":1,"errmsg":"must have a condition"})
-    condition = 'id="%s"' % id
-    fields = ['id','name','name_cn','email','mobile','role','status']
-    try:
-        sql = "select %s from users where %s" % (','.join(fields),condition)
-        cur.execute(sql)
-        res = cur.fetchone()
-        user = {}
-        user = dict((k,res[i]) for i,k in enumerate(fields))
-        return json.dumps({"code":0,"result":user})
-    except:
-        return json.dumps({"code":1,"errmsg":"select userinfo failed"})
+#@app.route('update',methods=['GET','POST'])
+#def update():
+#    if not session.get('name',None):
+#        return redirect('/login')
+#    name = session['name']
+#    role = session['role']
+#    info = {'name':name,'role':role}
+#    if request.method == 'POST':
+#        data = dict(request.form)
+#        data = dict((k,v[0]) for k,v in data.items())
+#        if role != 'admin':
+#            fields = ['id','name_cn','mobile','email']
+#            data = dict((f,data[f]) for f in fields)
+#            conditions = ["%s='%s'" % (k,v) for k,v in data.items()]
+#            try:
+#                sql = "update users set %s where id=%s" % (','.join(conditions),data['id'])
+#                cur.execute(sql)
+#                return json.dumps({"code":0,"result":"update success"})
+#            except Exception,e:
+#	         errmsg = e
+#	         return render_template('update.html',error=errmsg)
+#        else:
+#            uid = request.args.get('id')
+#            return render_template('update.html',uid=uid,info=info)
+#
+#@app.route('/getbyid')
+#def getbyid():
+#    if not session.get('name',None):
+#        return redirect('/login')
+#    id = request.args.get('id')
+#    if not id:
+#        return json.dumps({"code":1,"errmsg":"must have a condition"})
+#    condition = 'id="%s"' % id
+#    fields = ['id','name','name_cn','email','mobile','role','status']
+#    try:
+#        sql = "select %s from users where %s" % (','.join(fields),condition)
+#        cur.execute(sql)
+#        res = cur.fetchone()
+#        user = {}
+#        user = dict((k,res[i]) for i,k in enumerate(fields))
+#        return json.dumps({"code":0,"result":user})
+#    except:
+#        return json.dumps({"code":1,"errmsg":"select userinfo failed"})
 
 #@app.route('/delete',methods=['GET'])
 #def delete():
