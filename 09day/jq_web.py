@@ -52,7 +52,7 @@ import traceback
 app = Flask(__name__)
 app.secret_key="1q2w3e4R"
 
-db = mysql.connect(user='root',passwd='xiaofang',db='reboot')
+db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock')
 cur = db.cursor()
 
 #@app.route('/index')
@@ -64,29 +64,30 @@ cur = db.cursor()
 def login():
     if request.method == "POST":
         data = dict((k,v[0]) for k,v in dict(request.form).items())
+	print "data=",data
         if not data.get('name',None) or not data.get('password',None):
             errmsg = "name or password not null"
-            return render_template('new_login.html',error=errmsg)
-            #return json.dumps({'code':'1','error':errmsg})
+            #return render_template('new_login.html',error=errmsg)
+            return json.dumps({'code':'1','error':errmsg})
         fields = ['name','password','role']
         sql = "select %s from users where name='%s'" % (','.join(fields),data['name'])
         cur.execute(sql)
         res = cur.fetchone()
         if not res:       #如果这个用户在数据库中不存在，返回的结果就是res=(())
             errmsg = "%s is not exist" % data['name']
-            #return json.dumps({'code':1,'error':errmsg})
-            return render_template('new_login.html',error=errmsg)
+            return json.dumps({'code':1,'error':errmsg})
+            #return render_template('new_login.html',error=errmsg)
         user = {}
         user = dict((k,res[i]) for i,k in enumerate(fields))
         if user['password'] != data['password']:
             errmsg = "password is wrong"
-            #return json.dumps({'code':'1','error':errmsg})
-            return render_template('new_login.html',error=errmsg)
+            return json.dumps({'code':'1','error':errmsg})
+            #return render_template('new_login.html',error=errmsg)
         else:
             session['name'] = user['name']
             session['role'] = user['role']
-            return redirect('/userlist')
-            #return json.dumps({'code':'0','error':"login success"})
+            #return redirect('/userlist')
+            return json.dumps({'code':'0','error':"login success"})
     else:
         return render_template('new_login.html')
 
@@ -101,10 +102,10 @@ def userlist():
 	cur.execute(sql)
 	res = cur.fetchall()
 	users = [dict((k,row[i]) for i,k in enumerate(fields)) for row in res]
-        return render_template('ajax.html',users=users)
+        return render_template('new_userlist.html',users=users)
     except Exception,e:
 	errmsg = e
-	return render_template('ajax.html',error=errmsg)
+	return render_template('new_userlist.html',error=errmsg)
 
 @app.route('/logout')
 def logout():
