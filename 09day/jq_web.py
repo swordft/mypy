@@ -93,6 +93,10 @@ def login():
 
 @app.route('/userlist')
 def userlist():
+    return render_template('new_userlist.html')
+
+@app.route('/get_userlist')
+def get_userlist():
     if not session.get('name',None):
         return redirect('/login')
     users = []
@@ -102,10 +106,12 @@ def userlist():
 	cur.execute(sql)
 	res = cur.fetchall()
 	users = [dict((k,row[i]) for i,k in enumerate(fields)) for row in res]
-        return render_template('new_userlist.html',users=users)
+        #return render_template('new_userlist.html',users=users)
+        return json.dumps({'code':'0','result':users})
     except Exception,e:
 	errmsg = e
-	return render_template('new_userlist.html',error=errmsg)
+	#return render_template('new_userlist.html',error=errmsg)
+        return json.dumps({'code':'1'})
 
 @app.route('/logout')
 def logout():
