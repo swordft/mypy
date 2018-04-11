@@ -29,6 +29,23 @@
     <script src="/static/js/plugins/datatables/datatables.min.js"></script>
 
 <script>
+/*通过ID获取数据并渲染更新表单*/
+var id = {{ uid }}
+var url = "getbyid?id="+id
+$.getJSON(url,function(data){
+    console.log(data)
+    if (data['code'] == 0){
+        data = data['result']
+        $('#id').val(data['id'])
+        $('#name').val(data['name'])
+        $('#mobile').val(data['mobile'])
+        $('#email').val(data['email'])
+        $('#status').val(data['status'])
+	$('#password').val(data['password'])
+    }else{
+        alert(data['errmsg'])
+    }
+})
 
 $(document).ready(function(){
     $('#updatebtn').on('click',function(){
@@ -36,45 +53,22 @@ $(document).ready(function(){
         $.post("/update",str,function(data){
             //console.log(data)
             data = JSON.parse(data)
-            //console.log(data)
+            console.log(data)
             if (data['code'] == 0){
                 {% if info %}
                     role = "{{ info.role }}"
                     //alert(role)
-                    if (role == "admin"){
-                        location.href="/userlist"
-                    }else{
-                        location.href="/"
-                    }
+                    //if (role == "admin"){
+                    location.href="/userlist"
+                    //}else{
+                    //    location.href="/"
+                    //}
                 {% endif %}
              }else{
-                 $('#errmsg').html(data['errmsg'])
+                 alert(data['errmsg'])
              }
         })
         return false
-    })
-})
-
-$(document).ready(function(){
-    $.getJSON('/get_userlist',function(data){
-        console.log(data)
-        if (data['code'] == 0){
-            var str = ""
-            data = data['result']
-            $.each(data,function(i,n){
-            str = str + '<tr role="row" class="odd">'+
-                '<td class="text-center"><a>'+n.name+'</a></td>'+
-                '<td class="text-center"><a>'+n.role+'</a></td>'+
-                '<td class="text-center"><a>'+n.mobile+'</a></td>'+
-                '<td class="text-center"><a>'+n.email+'</a></td>'+
-                '<td class="text-center"><a>'+n.status+'</a></td>'+
-                '<td class="text-center"><a href="/update?id='+n.id+'" class="btn btn-xs btn-info">更新</a><a href="/delete?id='+n.id+'" class="btn btn-xs btn-danger m-l-xs">删除</a></td>'+
-                '</tr>'
-	    }) 
-            $("tbody").html(str)
-        }else{
-            $('#errmsg').html("fail")
-        }
     })
 })
 
@@ -106,7 +100,7 @@ $(document).ready(function(){
         <i class="fa fa-group" style="width: 14px"></i> <span class="nav-label">用户管理</span><span class="fa arrow"></span>
     </a>
     <ul class="nav nav-second-level active">
-        <li id="user"><a>用户列表</a></li>
+        <li id="user"><a href="/userlist">用户列表</a></li>
     </ul>
 </li>
 
@@ -180,30 +174,53 @@ $(document).ready(function(){
                 <div class="ibox-content">
                     <div class="" id="content_start">
                          
-                        
-    <div class="html5buttons">
-        <div class="dt-buttons btn-group">
-        </div>
+<form id="updateForm" method="post" class="form-horizontal" action="" enctype="multipart/form-data">
+        <input type='hidden' name='id' id="id"/>
+        <h3>账户</h3>
+                <div class="form-group"><label class="col-md-2 control-label" for="id_username">用户名</label><div class="col-md-9"><input type="text" name="name" maxlength="128" class="form-control" placeholder="用户名" title="* required" required id="name" />
+
+    <div class="help-block">* required</div>
+
+</div></div>
+        <div class="form-group"><label class="col-md-2 control-label" for="id_email">邮件</label><div class="col-md-9"><input type="email" name="email" maxlength="128" class="form-control" placeholder="邮件" title="* required" required id="email" />
+
+    <div class="help-block">* required</div>
+
+</div></div>
+
+        <div class="hr-line-dashed"></div>
+        
+    <h3>认证</h3>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">密码</label>
+	<div class="col-md-9"><input type="password" name="password" maxlength="128" class="form-control" placeholder="密码" title="" id="password"></div>
     </div>
 
-                    </div>
-                    
-<div class="uc pull-left m-r-5"><a href="/register" class="btn btn-sm btn-primary"> 创建用户 </a></div>
-<table class="table table-striped table-bordered table-hover " id="user_list_table" >
-    <thead>
-        <tr>
-            <th class="text-center">用户名</th>
-            <th class="text-center">角色</th>
-            <th class="text-center">手机号</th>
-            <th class="text-center">邮箱</th>
-            <th class="text-center">账号状态</th>
-            <th class="text-center">动作</th>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
 
+        <div class="hr-line-dashed"></div>
+        <h3>角色安全</h3>
+        <div class="form-group"><label class="col-md-2 control-label" for="id_role">角色</label><div class="col-md-9"><select name="role" class="form-control" title="" id="role">
+  <option value="admin">admin</option>
+
+  <option value="common_user" selected>common_user</option>
+
+</select></div></div>
+                <div class="hr-line-dashed"></div>
+        <h3>个人信息</h3>
+        <div class="form-group"><label class="col-md-2 control-label" for="id_phone">手机</label><div class="col-md-9"><input type="text" name="mobile" maxlength="20" class="form-control" placeholder="手机" title="" id="mobile" /></div></div>
+                <div class="hr-line-dashed"></div>
+        <div class="form-group">
+            <div class="col-sm-4 col-sm-offset-2">
+                <button id="updatebtn" class="btn btn-primary" type="submit">提交</button>
+            </div>
+        </div>
+    </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>                        
 
         <div class="footer fixed">
     <div class="pull-right">

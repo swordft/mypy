@@ -52,7 +52,8 @@ import traceback
 app = Flask(__name__)
 app.secret_key="1q2w3e4R"
 
-db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock')
+#db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock')
+db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock')
 cur = db.cursor()
 
 #@app.route('/index')
@@ -100,7 +101,7 @@ def get_userlist():
     if not session.get('name',None):
         return redirect('/login')
     users = []
-    fields = ['id','name','name_cn','email','mobile']
+    fields = ['id','name','name_cn','email','mobile','status','role']
     try:
 	sql = "select %s from users" % ','.join(fields)
 	cur.execute(sql)
@@ -118,70 +119,78 @@ def logout():
     session.pop('name')
     return redirect('/login')
 
-#@app.route('update',methods=['GET','POST'])
-#def update():
-#    if not session.get('name',None):
-#        return redirect('/login')
-#    name = session['name']
-#    role = session['role']
-#    info = {'name':name,'role':role}
-#    if request.method == 'POST':
-#        data = dict(request.form)
-#        data = dict((k,v[0]) for k,v in data.items())
-#        if role != 'admin':
-#            fields = ['id','name_cn','mobile','email']
-#            data = dict((f,data[f]) for f in fields)
-#            conditions = ["%s='%s'" % (k,v) for k,v in data.items()]
-#            try:
-#                sql = "update users set %s where id=%s" % (','.join(conditions),data['id'])
-#                cur.execute(sql)
-#                return json.dumps({"code":0,"result":"update success"})
-#            except Exception,e:
-#	         errmsg = e
-#	         return render_template('update.html',error=errmsg)
-#        else:
-#            uid = request.args.get('id')
-#            return render_template('update.html',uid=uid,info=info)
-#
-#@app.route('/getbyid')
-#def getbyid():
-#    if not session.get('name',None):
-#        return redirect('/login')
-#    id = request.args.get('id')
-#    if not id:
-#        return json.dumps({"code":1,"errmsg":"must have a condition"})
-#    condition = 'id="%s"' % id
-#    fields = ['id','name','name_cn','email','mobile','role','status']
-#    try:
-#        sql = "select %s from users where %s" % (','.join(fields),condition)
-#        cur.execute(sql)
-#        res = cur.fetchone()
-#        user = {}
-#        user = dict((k,res[i]) for i,k in enumerate(fields))
-#        return json.dumps({"code":0,"result":user})
-#    except:
-#        return json.dumps({"code":1,"errmsg":"select userinfo failed"})
+@app.route('/register',methods=['GET','POST'])
+def register():
+    if request.method == 'POST':
+        data = dict(request.form)
+    else:
+        return render_template('new_register.html')
 
-#@app.route('/delete',methods=['GET'])
-#def delete():
-#    if not session.get('name',None):
-#        return redirect('/login')
-#    role = session['role']
-#    if role != 'admin':
-#        return json.dumps({'code':1,'errmsg':"you are not admin,no privilege"})
-#    id = request.args.get('id',None)
-#    if not id:
-#        errmsg = "must have id"
-#        return render_template("userlist.html",result=errmsg)
-#    try:
-#        sql = "delete from users where id=%s" % id
-#        cur.execute(sql)
-#        return redirect('/userlist')
-#    except:
-#        errmsg = "delete failed"
-#        return render_template("userlist.html",result=errmsg)
-#
-#
-#
+@app.route('/update',methods=['GET','POST'])
+def update():
+    if not session.get('name',None):
+        return redirect('/login')
+    name = session['name']
+    role = session['role']
+    info = {'name':name,'role':role}
+    if request.method == 'POST':
+        data = dict(request.form)
+        data = dict((k,v[0]) for k,v in data.items())
+        fields = ['id','name','password','mobile','email','role']
+        data = dict((f,data[f]) for f in fields)
+        conditions = ["%s='%s'" % (k,v) for k,v in data.items()]
+        try:
+            sql = "update users set %s where id=%s" % (','.join(conditions),data['id'])
+            cur.execute(sql)
+            return json.dumps({"code":0,"result":"update success"})
+        except Exception,e:
+	    errmsg = e
+            return json.dumps({"code":1})
+	
+    else:
+        uid = request.args.get('id')
+        return render_template('new_update.html',uid=uid,info=info)
+
+@app.route('/getbyid')
+def getbyid():
+    if not session.get('name',None):
+        return redirect('/login')
+    id = request.args.get('id')
+    if not id:
+        return json.dumps({"code":1,"errmsg":"must have a condition"})
+    condition = 'id="%s"' % id
+    fields = ['id','name','password','email','mobile','role','status']
+    try:
+        sql = "select %s from users where %s" % (','.join(fields),condition)
+        cur.execute(sql)
+        res = cur.fetchone()
+        user = {}
+        user = dict((k,res[i]) for i,k in enumerate(fields))
+        return json.dumps({"code":0,"result":user})
+    except:
+        return json.dumps({"code":1,"errmsg":"select userinfo failed"})
+
+@app.route('/delete')
+def delete():
+    if not session.get('name',None):
+        return redirect('/login')
+    role = session['role']
+    if role != 'admin':
+        return json.dumps({'code':1,'errmsg':"you are not admin,no privilege"})
+    id = request.args.get('id',None)
+    if not id:
+        errmsg = "must have id"
+        return render_template("new_userlist.html",result=errmsg)
+    try:
+        sql = "delete from users where id=%s" % id
+        cur.execute(sql)
+	errmsg = "delete success"
+        return render_template("new_userlist.html",result=errmsg)
+        #return json.dumps({"code":0,"result":errmsg})
+    except:
+        errmsg = "delete failed"
+        return json.dumps({"code":1,"result":errmsg})
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=9092,debug=True)
