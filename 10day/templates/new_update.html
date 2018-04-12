@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>Jumpserver</title>
+    <link rel="shortcut icon" href="/static/img/facio.ico" type="image/x-icon">
+    
+
+<!-- css file -->
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/css/font-awesome.min.css" rel="stylesheet">
+<link href="/static/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+<link href="/static/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+<link href="/static/css/style.css" rel="stylesheet">
+<link href="/static/css/plugins/vaildator/jquery.validator.css" rel="stylesheet">
+<link href="/static/css/plugins/datatables/datatables.min.css" rel="stylesheet">
+<!-- scripts -->
+<!--<script src="/static/js/jquery-2.1.1.js"></script>-->
+<script src="/static/js/jquery-3.2.1.min.js"></script>
+<script src="/static/js/plugins/sweetalert/sweetalert.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/plugins/datatables/datatables.min.js"></script>
+    <link href="/static/css/jumpserver.css" rel="stylesheet">
+    <link href="/static/css/plugins/datatables/datatables.min.css" rel="stylesheet">
+    <link href="/static/css/plugins/select2/select2.min.css" rel="stylesheet">
+    <script src="/static/js/plugins/select2/select2.full.min.js"></script>
+    <script src="/static/js/plugins/datatables/datatables.min.js"></script>
+
+<script>
+/*通过ID获取数据并渲染更新表单*/
+var id = {{ uid }}
+var url = "getbyid?id="+id
+$.getJSON(url,function(data){
+    console.log(data)
+    if (data['code'] == 0){
+        data = data['result']
+        $('#id').val(data['id'])
+        $('#name').val(data['name'])
+        $('#mobile').val(data['mobile'])
+        $('#email').val(data['email'])
+        $('#status').val(data['status'])
+	$('#password').val(data['password'])
+    }else{
+        alert(data['errmsg'])
+    }
+})
+
+$(document).ready(function(){
+    $('#updatebtn').on('click',function(){
+        var str = $('#updateForm').serialize()
+        $.post("/update",str,function(data){
+            //console.log(data)
+            data = JSON.parse(data)
+            console.log(data)
+            if (data['code'] == 0){
+                {% if info %}
+                    role = "{{ info.role }}"
+                    //alert(role)
+                    //if (role == "admin"){
+                    location.href="/userlist"
+                    //}else{
+                    //    location.href="/"
+                    //}
+                {% endif %}
+             }else{
+                 alert(data['errmsg'])
+             }
+        })
+        return false
+    })
+})
+
+</script>
+
+</head>
+
+<body>
+<div id="wrapper">
+    <nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav" id="side-menu">
+            
+<li class="nav-header">
+    <div class="dropdown profile-element">
+        <div href="http://www.jumpserver.org" target="_blank">
+            <img alt="logo" height="55" width="185" src="/static/img/logo-text.png" style="margin-left: 20px"/>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="logo-element">
+        <img alt="image" height="40" src="/static/img/logo.png"/>
+    </div>
+</li>
+            
+                
+<li id="users">
+    <a href="#">
+        <i class="fa fa-group" style="width: 14px"></i> <span class="nav-label">用户管理</span><span class="fa arrow"></span>
+    </a>
+    <ul class="nav nav-second-level active">
+        <li id="user"><a href="/userlist">用户列表</a></li>
+    </ul>
+</li>
+
+            
+        </ul>
+    </div>
+</nav>
+
+    <div id="page-wrapper" class="gray-bg">
+        
+<div class="row border-bottom">
+    <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+              </div>
+        <ul class="nav navbar-top-links navbar-right">
+
+
+
+            <li class="dropdown">
+                <a class="count-info" href="https://market.aliyun.com/products/53690006/cmgj026011.html?spm=5176.730005.0.0.cY2io1" target="_blank">
+                </a>
+            </li>
+            <li class="dropdown">
+                <a class="count-info"  href="http://docs.jumpserver.org/" target="_blank">
+                </a>
+            </li>
+                    </ul>
+    </nav>
+</div>
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-10">
+        <h2></h2>
+        <ol class="breadcrumb">
+            
+            <li>
+                <a>用户管理</a>
+            </li>
+            
+            
+            <li class="active">
+                <strong>用户列表</strong>
+            </li>
+            
+        </ol>
+    </div>
+    <div class="col-sm-2">
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>
+                        用户列表
+                    </h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="" id="content_start">
+                         
+<form id="updateForm" method="post" class="form-horizontal" action="" enctype="multipart/form-data">
+        <input type='hidden' name='id' id="id"/>
+        <h3>账户</h3>
+                <div class="form-group"><label class="col-md-2 control-label" for="id_username">用户名</label><div class="col-md-9"><input type="text" name="name" maxlength="128" class="form-control" placeholder="用户名" title="* required" required id="name" />
+
+    <div class="help-block">* required</div>
+
+</div></div>
+        <div class="form-group"><label class="col-md-2 control-label" for="id_email">邮件</label><div class="col-md-9"><input type="email" name="email" maxlength="128" class="form-control" placeholder="邮件" title="* required" required id="email" />
+
+    <div class="help-block">* required</div>
+
+</div></div>
+
+        <div class="hr-line-dashed"></div>
+        
+    <h3>认证</h3>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">密码</label>
+	<div class="col-md-9"><input type="password" name="password" maxlength="128" class="form-control" placeholder="密码" title="" id="password"></div>
+    </div>
+
+
+        <div class="hr-line-dashed"></div>
+        <h3>角色安全</h3>
+        <div class="form-group"><label class="col-md-2 control-label" for="id_role">角色</label><div class="col-md-9"><select name="role" class="form-control" title="" id="role">
+  <option value="admin">admin</option>
+
+  <option value="common_user" selected>common_user</option>
+
+</select></div></div>
+                <div class="hr-line-dashed"></div>
+        <h3>个人信息</h3>
+        <div class="form-group"><label class="col-md-2 control-label" for="id_phone">手机</label><div class="col-md-9"><input type="text" name="mobile" maxlength="20" class="form-control" placeholder="手机" title="" id="mobile" /></div></div>
+                <div class="hr-line-dashed"></div>
+        <div class="form-group">
+            <div class="col-sm-4 col-sm-offset-2">
+                <button id="updatebtn" class="btn btn-primary" type="submit">提交</button>
+            </div>
+        </div>
+    </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>                        
+
+        <div class="footer fixed">
+    <div class="pull-right">
+        Version <strong>1.0.0-76
+</strong> GPLv2.
+        <img style="display: none" src="http://www.jumpserver.org/img/evaluate_avatar1.jpg">
+    </div>
+    <div>
+        <strong>Copyright</strong> 北京堆栈科技有限公司 &copy; 2014-2018
+    </div>
+</div>
+    </div>
+</div>
+
+</body>
+
+
+<!-- Mainly scripts -->
+<script src="/static/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="/static/js/plugins/toastr/toastr.min.js"></script>
+<script src="/static/js/inspinia.js"></script>
+<script src="/static/js/jumpserver.js"></script>
+<script src="/static/js/jquery.form.min.js"></script>
+
+</html>
+
