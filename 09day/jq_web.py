@@ -56,10 +56,9 @@ app.secret_key="1q2w3e4R"
 db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock')
 cur = db.cursor()
 
-#@app.route('/index')
-#def index():
-#    user = {'id':1,'name':'wd','age':'18'}
-#    return render_template('ajax.html',user=user)
+@app.route('/')
+def index():
+    return redirect('/login')
 
 @app.route('/login',methods=['POST','GET'])
 def login():
@@ -94,6 +93,8 @@ def login():
 
 @app.route('/userlist')
 def userlist():
+    if not session.get('name',None):
+        return redirect('/login')
     return render_template('new_userlist.html')
 
 @app.route('/get_userlist')
@@ -121,8 +122,18 @@ def logout():
 
 @app.route('/register',methods=['GET','POST'])
 def register():
-    if request.method == 'POST':
-        data = dict(request.form)
+    if request.method == "POST":
+	data = dict((k,v[0]) for k,v in dict(request.form).items())
+        fields = ['name','password','mobile','email','role']
+	print "data=",data
+        try:
+	    sql = "INSERT INTO users (%s) VALUES (%s)" % (','.join(fields),','.join(["'%s'" % data[x] for x in fields]))
+            cur.execute(sql)
+            return json.dumps({'code':'0','errmsg':"update success"})
+        except Exception,e:
+	    errmsg = e
+            return json.dumps({"code":'1',"errmsg":errmsg})
+
     else:
         return render_template('new_register.html')
 

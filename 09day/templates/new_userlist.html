@@ -30,30 +30,6 @@
 
 <script>
 
-$(document).ready(function(){
-    $('#updatebtn').on('click',function(){
-        var str = $('#updateForm').serialize()
-        $.post("/update",str,function(data){
-            //console.log(data)
-            data = JSON.parse(data)
-            //console.log(data)
-            if (data['code'] == 0){
-                {% if info %}
-                    role = "{{ info.role }}"
-                    //alert(role)
-                    if (role == "admin"){
-                        location.href="/userlist"
-                    }else{
-                        location.href="/"
-                    }
-                {% endif %}
-             }else{
-                 $('#errmsg').html(data['errmsg'])
-             }
-        })
-        return false
-    })
-})
 
 $(document).ready(function(){
     $.getJSON('/get_userlist',function(data){
@@ -67,7 +43,6 @@ $(document).ready(function(){
                 '<td class="text-center"><a>'+n.role+'</a></td>'+
                 '<td class="text-center"><a>'+n.mobile+'</a></td>'+
                 '<td class="text-center"><a>'+n.email+'</a></td>'+
-                '<td class="text-center"><a>'+n.status+'</a></td>'+
                 '<td class="text-center"><a href="/update?id='+n.id+'" class="btn btn-xs btn-info">更新</a><a href="/delete?id='+n.id+'" class="btn btn-xs btn-danger m-l-xs">删除</a></td>'+
                 '</tr>'
 	    }) 
@@ -196,7 +171,6 @@ $(document).ready(function(){
             <th class="text-center">角色</th>
             <th class="text-center">手机号</th>
             <th class="text-center">邮箱</th>
-            <th class="text-center">账号状态</th>
             <th class="text-center">动作</th>
         </tr>
     </thead>
