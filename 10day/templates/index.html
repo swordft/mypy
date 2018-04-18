@@ -34,7 +34,7 @@
     <div class="sidebar-collapse">
         <ul class="nav" id="side-menu">
             
-
+<!--左边头像部分-->
 <li class="nav-header">
     <div class="dropdown profile-element">
         <div href="http://www.jumpserver.org" target="_blank">
@@ -45,8 +45,8 @@
     <div class="logo-element">
         <img alt="image" height="40" src="/static/img/logo.png"/>
     </div>
-</li>
-<script>
+</li><!--左边头像部分-->
+<!--<script>
 $(document).ready(function () {
 })
 .on('click', '#switch_admin', function () {
@@ -65,17 +65,17 @@ $(document).ready(function () {
         window.location = "/assets/user-asset/"
     }, 100);
 })
-</script>
+</script>-->
 
             
                 
-<li id="index">
+<li id="index"><!--index-->
     <a href="/">
         <i class="fa fa-dashboard" style="width: 14px"></i> <span class="nav-label">仪表盘</span><span
             class="label label-info pull-right"></span>
     </a>
-</li>
-<li id="users">
+</li><!--index-->
+<li id="users"><!--users-->
     <a href="#">
         <i class="fa fa-group" style="width: 14px"></i> <span class="nav-label">用户管理</span><span class="fa arrow"></span>
     </a>
@@ -84,8 +84,8 @@ $(document).ready(function () {
         <li id="user-group"><a href="/users/user-group">用户组</a></li>
         <li id="login-log"><a href="/users/login-log/">登录日志</a></li>
     </ul>
-</li>
-<li id="assets">
+</li><!--users-->
+<li id="assets"><!--assets-->
     <a>
         <i class="fa fa-inbox" style="width: 14px"></i> <span class="nav-label">资产管理</span><span class="fa arrow"></span>
     </a>
@@ -95,16 +95,16 @@ $(document).ready(function () {
         <li id="system-user"><a href="/assets/system-user/">系统用户</a></li>
         <li id="label"><a href="/assets/label/">标签管理</a></li>
     </ul>
-</li>
-<li id="perms">
+</li><!--assets-->
+<li id="perms"><!--perms-->
     <a href="#"><i class="fa fa-edit" style="width: 14px"></i> <span class="nav-label">权限管理</span><span class="fa arrow"></span></a>
     <ul class="nav nav-second-level">
         <li id="asset-permission">
             <a href="/perms/asset-permission">资产授权</a>
         </li>
     </ul>
-</li>
-<li id="terminal">
+</li><!--perms-->
+<li id="terminal"><!--terminal-->
     <a>
         <i class="fa fa-rocket" style="width: 14px"></i> <span class="nav-label">会话管理</span><span class="fa arrow"></span>
     </a>
@@ -119,29 +119,21 @@ $(document).ready(function () {
         </li>
         <li id="terminal"><a href="/terminal/terminal/">终端管理</a></li>
     </ul>
-</li>
-<li id="ops">
+</li><!--terminal-->
+<li id="ops"><!--ops-->
     <a>
         <i class="fa fa-coffee" style="width: 14px"></i> <span class="nav-label">作业中心</span><span class="fa arrow"></span>
     </a>
     <ul class="nav nav-second-level">
         <li id="task"><a href="/ops/task/">任务列表</a></li>
     </ul>
-</li>
+</li><!--terminal-->
 
-
-
-
-
-
-
-
-
-<li id="settings">
+<li id="settings"><!--settings-->
     <a href="/settings/">
         <i class="fa fa-gears"></i> <span class="nav-label">系统设置</span><span class="label label-info pull-right"></span>
     </a>
-</li>
+</li><!--settings-->
             
         </ul>
     </div>
@@ -225,11 +217,11 @@ $(document).ready(function () {
 
 
 
-<script>
+<!--<script>
     function closePublicKeyMsg() {
         setCookie('close_public_key_msg', 1)
     }
-</script>
+</script>-->
         
 <div class="wrapper wrapper-content">
     <div class="row">
@@ -429,7 +421,7 @@ $(document).ready(function () {
 <script src="/static/js/plugins/toastr/toastr.min.js"></script>
 <script src="/static/js/inspinia.js"></script>
 <script src="/static/js/jumpserver.js"></script>
-<script>
+<!--<script>
 activeNav();
 $(document).ready(function(){
     setAjaxCSRFToken();
@@ -438,7 +430,7 @@ $(document).ready(function(){
         $('.tooltip').tooltip();
     }
 });
-</script>
+</script>-->
 
 
 <script src="/static/js/plugins/echarts/echarts.js"></script>
@@ -676,7 +668,7 @@ $(document).ready(function(){
             aaChart.setOption(option);
         }
     );
-</script>
+</script>-
 
 
 </html>
