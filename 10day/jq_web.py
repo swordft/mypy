@@ -10,7 +10,7 @@ import traceback
 app = Flask(__name__)
 app.secret_key="1q2w3e4R"
 
-db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock')
+db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock',charset='utf8')
 #db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock')
 cur = db.cursor()
 
@@ -65,6 +65,29 @@ def userlist():
     res = cur.fetchall()
     data = [dict((k,row[i]) for i,k in enumerate(fields)) for row in res]
     return render_template('userlist.html',users=data,info=session)
+
+@app.route('/add',methods=['GET','POST'])
+def add_user():
+    if not session.get('name',None):
+        return redirect('/login')
+    if request.method == "GET":
+        return render_template('add.html',info=session)
+    if request.method == "POST":
+	data = dict((k,v[0]) for k,v in dict(request.form).items())
+        fields = ['name','password','mobile','email','role']
+	sql = "INSERT INTO users (%s) VALUES (%s)" % (','.join(fields),','.join(["'%s'" % data[x] for x in fields]))
+        cur.execute(sql)
+        return json.dumps({'code':'0','errmsg':"add user success"})
+
+@app.route('/delete')
+def del_user():
+    if not session.get('name',None):
+        return redirect('/login')
+    uid = request.args.get('id')
+    sql = "delete from users where id=%s" % id
+    cur.execute(sql)
+    return json.dumps({'code':0,'errmsg':"delete user success"})
+    
 
 #@app.route('/')
 #def index():
