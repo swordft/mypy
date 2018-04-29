@@ -66,7 +66,7 @@ def userlist():
     data = [dict((k,row[i]) for i,k in enumerate(fields)) for row in res]
     return render_template('userlist.html',users=data,info=session)
 
-@app.route('/add',methods=['GET','POST'])
+@app.route('/add_user',methods=['GET','POST'])
 def add_user():
     if not session.get('name',None):
         return redirect('/login')
@@ -74,17 +74,18 @@ def add_user():
         return render_template('add.html',info=session)
     if request.method == "POST":
 	data = dict((k,v[0]) for k,v in dict(request.form).items())
-        fields = ['name','password','mobile','email','role']
+        fields = ['name','name_cn','password','mobile','email','role','status']
 	sql = "INSERT INTO users (%s) VALUES (%s)" % (','.join(fields),','.join(["'%s'" % data[x] for x in fields]))
         cur.execute(sql)
         return json.dumps({'code':'0','errmsg':"add user success"})
 
-@app.route('/delete')
+@app.route('/del_user')
 def del_user():
     if not session.get('name',None):
         return redirect('/login')
     uid = request.args.get('id')
-    sql = "delete from users where id=%s" % id
+    sql = "delete from users where id=%s" % uid
+    print "sql=",sql
     cur.execute(sql)
     return json.dumps({'code':0,'errmsg':"delete user success"})
     
