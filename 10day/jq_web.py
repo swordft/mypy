@@ -67,17 +67,24 @@ def userlist():
     return render_template('userlist.html',users=data,info=session)
 
 @app.route('/add_user',methods=['GET','POST'])
-def add_user():
+def add():
     if not session.get('name',None):
         return redirect('/login')
     if request.method == "GET":
         return render_template('add.html',info=session)
     if request.method == "POST":
+        print "request.form=",request.form
 	data = dict((k,v[0]) for k,v in dict(request.form).items())
         fields = ['name','name_cn','password','mobile','email','role','status']
-	sql = "INSERT INTO users (%s) VALUES (%s)" % (','.join(fields),','.join(["'%s'" % data[x] for x in fields]))
-        cur.execute(sql)
-        return json.dumps({'code':'0','errmsg':"add user success"})
+        print "data=",data
+        try:
+	    sql = "INSERT INTO users (%s) VALUES (%s)" % (','.join(fields),','.join(["'%s'" % data[x] for x in fields]))
+            cur.execute(sql)
+            print "sql=",sql
+            return json.dumps({'code':'0','errmsg':"add user success"})
+        except Exception,e:
+            errmsg = e
+            return json.dumps({"code":'1',"errmsg":errmsg})
 
 @app.route('/del_user')
 def del_user():
@@ -85,10 +92,51 @@ def del_user():
         return redirect('/login')
     uid = request.args.get('id')
     sql = "delete from users where id=%s" % uid
-    print "sql=",sql
     cur.execute(sql)
-    return json.dumps({'code':0,'errmsg':"delete user success"})
+    return json.dumps({'code':'0','errmsg':"delete user success"})
     
+@app.route('/update_user',methods=['GET','POST'])
+def update():
+    if not session.get('name',None):
+        return redirect('/login')
+    name = session['name']
+    role = session['role']
+    info = {'name':name,'role':role}
+    if request.method == 'POST':
+        data = dict((k,v[0]) for k,v in dict(request.form).items())
+        fields = ['id','name','name_cn','password','mobile','email','role']
+        data = dict((f,data[f]) for f in fields)
+        conditions = ["%s='%s'" % (k,v) for k,v in data.items()]
+        try:
+            sql = "update users set %s where id=%s" % (','.join(conditions),data['id'])
+            cur.execute(sql)
+            return json.dumps({"code":0,"result":"update success"})
+        except Exception,e:
+	    errmsg = e
+            return json.dumps({"code":1})
+	
+    else:
+        uid = request.args.get('id')
+        return render_template('update.html',uid=uid,info=info)
+
+@app.route('/getbyid')
+def getbyid():
+    if not session.get('name',None):
+        return redirect('/login')
+    id = request.args.get('id')
+    if not id:
+        return json.dumps({"code":1,"errmsg":"must have a condition"})
+    condition = 'id="%s"' % id
+    fields = ['id','name','name_cn','password','email','mobile','role','status']
+    try:
+        sql = "select %s from users where %s" % (','.join(fields),condition)
+        cur.execute(sql)
+        res = cur.fetchone()
+        user = {}
+        user = dict((k,res[i]) for i,k in enumerate(fields))
+        return json.dumps({"code":0,"result":user})
+    except:
+        return json.dumps({"code":1,"errmsg":"select userinfo failed"})
 
 #@app.route('/')
 #def index():

@@ -52,8 +52,8 @@ import traceback
 app = Flask(__name__)
 app.secret_key="1q2w3e4R"
 
-#db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock')
-db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock')
+db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock')
+#db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock')
 cur = db.cursor()
 
 @app.route('/')

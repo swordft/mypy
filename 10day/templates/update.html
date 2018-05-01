@@ -19,7 +19,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="col-md-2 control-label" for="id_username">姓名</label>
+                    <label class="col-md-2 control-label" for="id_namecn">姓名</label>
                     <div class="col-md-9">
                         <input type="text" name="name_cn" maxlength="128" class="form-control" placeholder="姓名" title="* required" required id="name_cn" />
                         <div class="help-block">* required</div>
@@ -50,15 +50,15 @@
                     <div class="col-md-9">
                         <select name="role" class="form-control" title="" id="role">
                             <option value="admin">管理员</option>
-                            <option value="common_user" selected>普通用户</option>
+                            <option value="common_user" selected>用户</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group"><label class="col-md-2 control-label" for="id_status">状态</label>
                     <div class="col-md-9">
                         <select name="status" class="form-control" title="" id="status">
-                            <option value="0">锁定</option>
-                            <option value="1" selected>正常</option>
+                            <option value="1">锁定</option>
+                            <option value="0" selected>正常</option>
                         </select>
                     </div>
                 </div>
@@ -76,8 +76,8 @@
                 
                 <div class="form-group">
                     <div class="col-sm-4 col-sm-offset-2">
-                        <button class="btn btn-white" type="reset">重置</button>
-                        <button id="addbtn" class="btn btn-primary" type="submit">提交</button>
+                        <a class="btn btn-white" type="reset">重置</a>
+                        <a id="addbtn" class="btn btn-primary">提交</a>
                     </div>
                 </div>
             </form>
@@ -87,20 +87,24 @@
 {% endblock %}
 
 
-<script>
-$('#addbtn').on('click',function(){
-    var str = $('#addUserForm').serialize()
-    $.post("/add_user",str,function(data){
-        console.log(data)
-        data = JSON.parse(data)
-        console.log(data)
-        if (data['code'] == 0){
-            location.href="/userlist"
-        }else{
-            $('#errmsg').html(data['errmsg'])
-        }
+<!--<script>
+$(document).ready(function(){
+    $('#addbtn').on('click',function(){
+        var str = $('#addUserForm').serialize()
+        $.post("/add_user",str,function(data){
+            console.log(data)
+            data = JSON.parse(data)
+            console.log(data)
+            if (data['code'] == '0'){
+                alert(data['errmsg'])
+                location.href="/userlist"
+            }else{
+                alert(data['errmsg'])
+                $('#errmsg').html(data['errmsg'])
+            }
+        })
+        return false
     })
-    return false
 })
-</script>
+</script>-->
 
