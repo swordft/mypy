@@ -8,7 +8,8 @@
 <div class="col-sm-12">
     <div class="ibox-content">
         <div class="" id="content_start">
-            <form id="addUserForm" method="post" class="form-horizontal" action="">
+            <form id="updateUserForm" method="post" class="form-horizontal" action="">
+                <input type='hidden' name='id' id="id"/>
                 <h3>账户</h3>
                 <div class="form-group">
                     <label class="col-md-2 control-label" for="id_username">用户名</label>
@@ -77,7 +78,7 @@
                 <div class="form-group">
                     <div class="col-sm-4 col-sm-offset-2">
                         <a class="btn btn-white" type="reset">重置</a>
-                        <a id="addbtn" class="btn btn-primary">提交</a>
+                        <a id="updatebtn" class="btn btn-primary">提交</a>
                     </div>
                 </div>
             </form>
@@ -86,12 +87,32 @@
 </div>
 {% endblock %}
 
+{% block scripts %}
+<script>
+/*通过ID获取数据并渲染更新表单*/
+var id = {{ uid }}
+var url = "getbyid?id="+id
+$.getJSON(url,function(data){
+    console.log(data)
+    if (data['code'] == 0){
+        data = data['result']
+        $('#id').val(data['id'])
+        $('#name').val(data['name'])
+        $('#name_cn').val(data['name_cn'])
+        $('#mobile').val(data['mobile'])
+        $('#email').val(data['email'])
+        $('#status').val(data['status'])
+        $('#password').val(data['password'])
+    }else{
+        alert(data['errmsg'])
+    }
+})
 
-<!--<script>
 $(document).ready(function(){
-    $('#addbtn').on('click',function(){
-        var str = $('#addUserForm').serialize()
-        $.post("/add_user",str,function(data){
+    $('#updatebtn').on('click',function(){
+        var str = $('#updateUserForm').serialize()
+        console.log(str)
+        $.post("/update_user",str,function(data){
             console.log(data)
             data = JSON.parse(data)
             console.log(data)
@@ -106,5 +127,6 @@ $(document).ready(function(){
         return false
     })
 })
-</script>-->
+</script>
+{% endblock %}
 

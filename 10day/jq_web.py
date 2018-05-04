@@ -67,20 +67,17 @@ def userlist():
     return render_template('userlist.html',users=data,info=session)
 
 @app.route('/add_user',methods=['GET','POST'])
-def add():
+def add_user():
     if not session.get('name',None):
         return redirect('/login')
     if request.method == "GET":
         return render_template('add.html',info=session)
     if request.method == "POST":
-        print "request.form=",request.form
 	data = dict((k,v[0]) for k,v in dict(request.form).items())
         fields = ['name','name_cn','password','mobile','email','role','status']
-        print "data=",data
         try:
 	    sql = "INSERT INTO users (%s) VALUES (%s)" % (','.join(fields),','.join(["'%s'" % data[x] for x in fields]))
             cur.execute(sql)
-            print "sql=",sql
             return json.dumps({'code':'0','errmsg':"add user success"})
         except Exception,e:
             errmsg = e
@@ -102,6 +99,9 @@ def update():
     name = session['name']
     role = session['role']
     info = {'name':name,'role':role}
+    if request.method == 'GET':
+        uid = request.args.get('id')
+        return render_template('update.html',uid=uid,info=info)
     if request.method == 'POST':
         data = dict((k,v[0]) for k,v in dict(request.form).items())
         fields = ['id','name','name_cn','password','mobile','email','role']
@@ -110,14 +110,10 @@ def update():
         try:
             sql = "update users set %s where id=%s" % (','.join(conditions),data['id'])
             cur.execute(sql)
-            return json.dumps({"code":0,"result":"update success"})
+            return json.dumps({"code":0,"errmsg":"update success"})
         except Exception,e:
 	    errmsg = e
             return json.dumps({"code":1})
-	
-    else:
-        uid = request.args.get('id')
-        return render_template('update.html',uid=uid,info=info)
 
 @app.route('/getbyid')
 def getbyid():

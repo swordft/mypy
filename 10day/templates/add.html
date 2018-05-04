@@ -91,17 +91,13 @@
 $(document).ready(function(){
     $('#addbtn').on('click',function(){
         var str = $('#addUserForm').serialize()
-        //console.log(str)
         $.post("/add_user",str,function(data){
-            console.log(data)
             data = JSON.parse(data)
-            console.log(data)
-            if (data['code'] == '0'){
+            if (data['code'] == 0){
                 alert(data['errmsg'])
                 location.href="/userlist"
             }else{
                 alert(data['errmsg'])
-                $('#errmsg').html(data['errmsg'])
             }
         })
         return false
