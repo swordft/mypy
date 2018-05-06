@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block breadcrumb %}
-用户列表
+更新资产
 {% endblock %}
 
 {% block main %}
@@ -10,73 +10,54 @@
         <div class="" id="content_start">
             <form id="updateUserForm" method="post" class="form-horizontal" action="">
                 <input type='hidden' name='id' id="id"/>
-                <h3>账户</h3>
+                <h3>基本</h3>
                 <div class="form-group">
-                    <label class="col-md-2 control-label" for="id_username">用户名</label>
+                    <label class="col-md-2 control-label" for="id_hostname">主机名</label>
                     <div class="col-md-9">
-                        <input type="text" name="name" maxlength="128" class="form-control" placeholder="用户名" title="* required" required id="name" />
+                        <input type="text" name="hostname" maxlength="128" class="form-control" placeholder="主机名" title="* required" required id="hostname" />
                         <div class="help-block">* required</div>
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label class="col-md-2 control-label" for="id_namecn">姓名</label>
+                    <label class="col-md-2 control-label" for="id_ip">IP</label>
                     <div class="col-md-9">
-                        <input type="text" name="name_cn" maxlength="128" class="form-control" placeholder="姓名" title="* required" required id="name_cn" />
+                        <input type="text" name="ip" maxlength="128" class="form-control" placeholder="xx.xx.xx.xx" title="* required" required id="ip" />
                         <div class="help-block">* required</div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="col-md-2 control-label" for="id_email">邮件</label>
+                <!--<div class="form-group">
+                    <label class="col-md-2 control-label" for="id_email">系统平台</label>
                     <div class="col-md-9">
-                        <input type="email" name="email" maxlength="128" class="form-control" placeholder="邮件" title="* required" required id="email" />
+                        <input type="text" name="os" maxlength="128" class="form-control" placeholder="操作系统" title="* required" required id="email" />
                         <div class="help-block">* required</div>
+                    </div>
+                </div>-->
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="id_platform">系统平台</label>
+                    <div class="col-md-9">
+                    <select name="platform" class="form-control" title="* required 必须准确设置操作系统平台，如Windows, Linux ..." id="id_platform">
+                        <option value="Linux" selected>Linux</option>
+                        <option value="Unix">Unix</option>
+                        <option value="MacOS">MacOS</option>
+                        <option value="BSD">BSD</option>
+                        <option value="Windows">Windows</option>
+                        <option value="Other">Other</option>
+                    </select>
                     </div>
                 </div>
                 <div class="hr-line-dashed"></div>
     
-                <h3>认证</h3>
+                <h3>配置</h3>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">密码</label>
+                    <label class="col-sm-2 control-label">CPU</label>
                     <div class="col-md-9">
-                        <input type="password" name="password" maxlength="128" class="form-control" placeholder="密码" title="" id="password">
+                        <input type="text" name="cpu" maxlength="128" class="form-control" placeholder="密码" title="" id="cpu">
                         <div class="help-block">* required</div>
                     </div>
                 </div>
                 <div class="hr-line-dashed"></div>
-                
-                {% if info['role'] == "admin" %}
-                <h3>角色安全</h3>
-                <div class="form-group"><label class="col-md-2 control-label" for="id_role">角色</label>
-                    <div class="col-md-9">
-                        <select name="role" class="form-control" title="" id="role">
-                            <option value="admin">管理员</option>
-                            <option value="common_user" selected>用户</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group"><label class="col-md-2 control-label" for="id_status">状态</label>
-                    <div class="col-md-9">
-                        <select name="status" class="form-control" title="" id="status">
-                            <option value="1">锁定</option>
-                            <option value="0" selected>正常</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="hr-line-dashed"></div>
-                {% endif %}
-       
-                <h3>个人信息</h3>
-                <div class="form-group">
-                    <label class="col-md-2 control-label" for="id_phone">手机</label>
-                    <div class="col-md-9">
-                        <input type="text" name="mobile" maxlength="20" class="form-control" placeholder="手机" title="" id="mobile" />
-                    </div>
-                </div>
-                <div class="hr-line-dashed"></div>
-                
                 <div class="form-group">
                     <div class="col-sm-4 col-sm-offset-2">
                         <a class="btn btn-white" type="reset">重置</a>

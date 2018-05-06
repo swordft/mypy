@@ -66,8 +66,7 @@ $('#loginbtn').on('click',function(){
         data = JSON.parse(data)
         console.log(data)
         if (data['code']==0){
-            alert(data['errmsg'])
-            location.href="/index"
+            location.href="/userlist"
         }else{
 	    alert(data['errmsg'])
             $('#errmsg').html(data['errmsg'])

@@ -93,11 +93,13 @@ $(document).ready(function(){
         var str = $('#addUserForm').serialize()
         $.post("/add_user",str,function(data){
             data = JSON.parse(data)
+            console.log(data)
             if (data['code'] == 0){
                 alert(data['errmsg'])
                 location.href="/userlist"
             }else{
                 alert(data['errmsg'])
+                location.reload()
             }
         })
         return false
