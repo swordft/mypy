@@ -12,8 +12,8 @@ app = Flask(__name__)
 app.secret_key="1q2w3e4R"
 salt = "aaaaa"
 
-#db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock',charset='utf8')
-db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock',charset='utf8')
+db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock',charset='utf8')
+#db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock',charset='utf8')
 cur = db.cursor()
 
 # 用户管理
@@ -118,9 +118,9 @@ def update():
     name = session['name']
     role = session['role']
     info = {'name':name,'role':role}
-    if request.method == 'GET':
-        uid = request.args.get('id')
-        return render_template('update.html',uid=uid,info=info)
+    #if request.method == 'GET':
+    #    uid = request.args.get('id')
+    #    return render_template('update.html',uid=uid,info=info)
     if request.method == 'POST':
         data = dict((k,v[0]) for k,v in dict(request.form).items())
         if info['role'] == "admin":
