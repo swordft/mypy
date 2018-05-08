@@ -6,9 +6,11 @@ import MySQLdb as mysql
 import time
 import json
 import traceback
+import hashlib
 
 app = Flask(__name__)
 app.secret_key="1q2w3e4R"
+salt = "aaaaa"
 
 #db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock',charset='utf8')
 db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock',charset='utf8')
@@ -25,6 +27,7 @@ def login():
     # 如果不正确则输出错误信息到前端jQuery，如果正确则创建session，并返回正确码code到前端jQuery
     if request.method == "POST":
         data = dict((k,v[0]) for k,v in dict(request.form).items())
+        data['password'] = hashlib.md5(data['password']+salt).hexdigest()
         if not data.get('name',None) or not data.get('password',None):
             return json.dumps({'code':'1','errmsg':"name or password not null"})
         fields = ['name','password','role','status']
@@ -35,9 +38,8 @@ def login():
             return json.dumps({'code':1,'errmsg':'user does not exists'})
         user = {}
         user = dict((k,res[i]) for i,k in enumerate(fields))
-        print "user=",user
         if user['status'] == 1:
-            return json.dumps({'code':'1','errmsg':'account is locked!please contact administrator'})
+            return json.dumps({'code':'1','errmsg':'account is locked! please contact administrator'})
         elif user['password'] != data['password']:
             return json.dumps({'code':'1','errmsg':'password is wrong'})
         else:
@@ -83,6 +85,7 @@ def add_user():
         return render_template('add.html',info=session)
     if request.method == "POST":
 	data = dict((k,v[0]) for k,v in dict(request.form).items())
+        data['password'] = hashlib.md5(data['password']+salt).hexdigest()    # 对密码进行md5加密
         fields = ['name','name_cn','password','mobile','email','role','status']
         # 检查是否存在相同用户名
         sql = "SELECT COUNT(*) FROM users WHERE name='%s'" % data['name']
