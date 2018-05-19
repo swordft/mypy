@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block breadcrumb %}
+更新资产
+{% endblock %}
+
+{% block main %}
+
+<div class="col-sm-12">
+    <div class="ibox-content">
+        <div class="" id="content_start">
+            <form id="updateUserForm" method="post" class="form-horizontal" action="">
+                <input type='hidden' name='id' id="id"/>
+                <h3>基本</h3>
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="id_hostname">主机名</label>
+                    <div class="col-md-9">
+                        <input type="text" name="hostname" maxlength="128" class="form-control" placeholder="主机名" title="* required" required id="hostname" />
+                        <div class="help-block">* required</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="id_ip">IP</label>
+                    <div class="col-md-9">
+                        <input type="text" name="ip" maxlength="128" class="form-control" placeholder="xx.xx.xx.xx" title="* required" required id="ip" />
+                        <div class="help-block">* required</div>
+                    </div>
+                </div>
+
+                <!--<div class="form-group">
+                    <label class="col-md-2 control-label" for="id_email">系统平台</label>
+                    <div class="col-md-9">
+                        <input type="text" name="os" maxlength="128" class="form-control" placeholder="操作系统" title="* required" required id="email" />
+                        <div class="help-block">* required</div>
+                    </div>
+                </div>-->
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="id_platform">系统平台</label>
+                    <div class="col-md-9">
+                    <select name="platform" class="form-control" title="* required 必须准确设置操作系统平台，如Windows, Linux ..." id="id_platform">
+                        <option value="Linux" selected>Linux</option>
+                        <option value="Unix">Unix</option>
+                        <option value="MacOS">MacOS</option>
+                        <option value="BSD">BSD</option>
+                        <option value="Windows">Windows</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+    
+                <h3>配置</h3>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">CPU</label>
+                    <div class="col-md-9">
+                        <input type="text" name="cpu" maxlength="128" class="form-control" placeholder="密码" title="" id="cpu">
+                        <div class="help-block">* required</div>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-2">
+                        <a class="btn btn-white" type="reset">重置</a>
+                        <a id="updatebtn" class="btn btn-primary">提交</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+/*通过ID获取数据并渲染更新表单*/
+var id = {{ uid }}
+var url = "getbyid?id="+id
+$.getJSON(url,function(data){
+    console.log(data)
+    if (data['code'] == 0){
+        data = data['result']
+        $('#id').val(data['id'])
+        $('#name').val(data['name'])
+        $('#name_cn').val(data['name_cn'])
+        $('#mobile').val(data['mobile'])
+        $('#email').val(data['email'])
+        $('#status').val(data['status'])
+        $('#password').val(data['password'])
+    }else{
+        alert(data['errmsg'])
+    }
+})
+
+$(document).ready(function(){
+    $('#updatebtn').on('click',function(){
+        var str = $('#updateUserForm').serialize()
+        console.log(str)
+        $.post("/update_user",str,function(data){
+            console.log(data)
+            data = JSON.parse(data)
+            console.log(data)
+            if (data['code'] == '0'){
+                alert(data['errmsg'])
+                location.href="/userlist"
+            }else{
+                alert(data['errmsg'])
+                location.reload()
+            }
+        })
+        return false
+    })
+})
+</script>
+{% endblock %}
+

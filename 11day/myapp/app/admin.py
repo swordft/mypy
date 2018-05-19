@@ -20,6 +20,7 @@ cur = db.cursor()
 @app.route('/')
 @app.route('/login',methods=['POST','GET'])
 def login():
+    print "hello world!"
     # 用户第一次打开登录页面为GET请求，返回一个空的登录页
     if request.method == "GET":
         return render_template("login.html")
@@ -47,11 +48,11 @@ def login():
             session['role'] = user['role']
             return json.dumps({'code':'0','errmsg':"login success"})
 
-@app.route('/index')
-def index():
-    if not session.get('name',None):
-        return redirect('/login')
-    return render_template("index.html",info=session)
+#@app.route('/index')
+#def index():
+#    if not session.get('name',None):
+#        return redirect('/login')
+#    return render_template("index.html",info=session)
 
 @app.route('/logout')
 def logout():
@@ -223,7 +224,3 @@ def update_server():
 	    errmsg = e
             return json.dumps({"code":1})
 
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=9092,debug=True)
