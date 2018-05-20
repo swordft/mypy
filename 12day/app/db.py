@@ -5,18 +5,25 @@
 
 import MySQLdb as mysql
 
-db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock',charset='utf8')
+db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock',charset='utf8')
 cur = db.cursor()
 
-# 获取用户信息列表
-def get_list(fields,table,id=None):
-    if not id:
+# 获取表数据
+def get_list(fields,table,name=None):
+    res = None
+    if not name:
         sql = "select %s from %s" % (','.join(fields),table)
         cur.execute(sql)
+        result = cur.fetchall()
+        if result:
+            res = [dict((k,row[i]) for i,k in enumerate(fields)) for row in result]
     else:
-        sql = "select %s from %s where id='%s'" % (','.join(fields),table,id)
+        sql = "select %s from %s where name='%s'" % (','.join(fields),table,name)
         cur.execute(sql)
-    result = cur.fetchall()
-    res = [dict((k,row[i]) for i,k in enumrate(fields)) for row in result]
+        result = cur.fetchone()
+        if result:
+            res = dict((k,result[i]) for i,k in enumerate(fields))
     return res
-        
+
+#res = get_list(['name','name_cn','password','mobile','email','role','status'],'users')
+#print "res=",res        

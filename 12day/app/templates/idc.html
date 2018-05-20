@@ -10,18 +10,26 @@
 <table class="table table-striped table-bordered table-hover " id="idc_list_table" >
     <thead>
         <tr>
-            <th class="text-center">名称</th>
-            <th class="text-center">城市</th>
+            <th class="text-center">编号</th>
+            <th class="text-center">机房名</th>
+            <th class="text-center">中文名</th>
             <th class="text-center">地址</th>
+            <th class="text-center">联系人</th>
+            <th class="text-center">联系电话</th>
+            <th class="text-center">机柜数量</th>
             <th class="text-center">操作</th>
         </tr>
     </thead>
     <tbody>
         {% for idc in data %}
 	    <tr role="row" class="odd"> 
-	        <td class="text-center">{{ idc.name }}</td>
-	    	<td class="text-center">{{ idc.city }}</td>
+	        <td class="text-center">{{ idc.id }}</td>
+	    	<td class="text-center">{{ idc.name }}</td>
+	        <td class="text-center">{{ idc.name_cn }}</td>
 	        <td class="text-center">{{ idc.address }}</td>
+	    	<td class="text-center">{{ idc.admin }}</td>
+	        <td class="text-center">{{ idc.phone }}</td>
+	        <td class="text-center">{{ idc.num }}</td>
 	    	<td class="text-center">
 	            <a data-id="{{ idc.id }}" class="btn btn-xs btn-info update">编辑</a>
 	            {% if info['role'] == "admin" %}<a data-id="{{ idc.id }}" class="btn btn-xs btn-danger del">删除</a>{% endif %}
