@@ -25,5 +25,10 @@ def get_list(fields,table,name=None):
             res = dict((k,result[i]) for i,k in enumerate(fields))
     return res
 
+# 插入表数据
+def insert(table,fields,values):
+    sql = "INSERT INTO table (%s) VALUES (%s)" % (table,','.join(fields),values)
+    cur.execute(sql)
+
 #res = get_list(['name','name_cn','password','mobile','email','role','status'],'users')
 #print "res=",res        

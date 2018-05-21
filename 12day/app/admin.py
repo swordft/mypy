@@ -77,8 +77,8 @@ def add_user():
         if res:
             return json.dumps({'code':'1','errmsg':"username duplicate,please choice another!"})
         try:
-	    sql = "INSERT INTO users (%s) VALUES (%s)" % (','.join(fields),','.join(["'%s'" % data[x] for x in fields]))
-            cur.execute(sql)
+            values = ','.join(["'%s'" % data[x] for x in fields])
+            insert('users',fields,values)
             return json.dumps({'code':'0','errmsg':"add user success"})
         except Exception,e:
             errmsg = e
@@ -100,9 +100,6 @@ def update():
     name = session['name']
     role = session['role']
     info = {'name':name,'role':role}
-    #if request.method == 'GET':
-    #    uid = request.args.get('id')
-    #    return render_template('update.html',uid=uid,info=info)
     if request.method == 'POST':
         data = dict((k,v[0]) for k,v in dict(request.form).items())
         if info['role'] == "admin":
