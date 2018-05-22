@@ -9,17 +9,7 @@ from db import *
 
 fields_cabinet = ['id','name','idc_id','u_num','power']
 fields_idc = ['id','name','name_cn','address','admin','phone','num']
-
-#@app.route('/cabinet')
-#def cabinet():
-#    if not session.get('name'):
-#        return render_template('login.html')
-#    role = session.get('role')
-#    cabinets = get_list('cabinet',fields_cabinet)
-#    for i in cabinets:
-#        idc = get_list('idc',fields_idc,i['idc_id'])
-#        i['idc_id'] = idc['name']
-#    return render_template('cabinet.html',cabinets=cabinets,role=role)
+fields_server = ['id','hostname','inter_ip','outer_ip','cabinet_id','op','phone']
 
 @app.route('/idc')
 def idc():
@@ -27,25 +17,21 @@ def idc():
         return redirect('/login')
     name = session['name']
     role = session['role']
-    fields = ['id','name','name_cn','address','admin','phone','num']
-    sql = "select %s from idc" % ','.join(fields)
-    cur.execute(sql)
-    res = cur.fetchall()
-    data = [dict((k,row[i]) for i,k in enumerate(fields)) for row in res]
-    return render_template('idc.html',data=data,info=session)
+    idcs = get_list('idc',fields_idc)
+    return render_template('idc.html',data=idcs,info=session)
 
 @app.route('/cabinet')
 def cabinet():
-    if not session.get('name',None):
-        return redirect('/login')
+    if not session.get('name'):
+        return render_template('login.html')
     name = session['name']
-    role = session['role']
-    fields = ['id','name','idc_id','u_num','power']
-    sql = "select %s from cabinet" % ','.join(fields)
-    cur.execute(sql)
-    res = cur.fetchall()
-    data = [dict((k,row[i]) for i,k in enumerate(fields)) for row in res]
-    return render_template('cabinet.html',data=data,info=session)
+    role = session.get('role')
+    cabinets = get_list('cabinet',fields_cabinet)
+    idcs = dict([(i['id'],i['name_cn']) for i in get_list('idc',fields_idc)])
+    for cab in cabinets:
+        if cab['idc_id'] in idcs:
+            cab['idc_id'] = idcs[cab['idc_id']]
+    return render_template('cabinet.html',data=cabinets,info=session)
 
 @app.route('/server')
 def server():
@@ -53,12 +39,14 @@ def server():
         return redirect('/login')
     name = session['name']
     role = session['role']
-    fields = ['id','hostname','inter_ip','outer_ip','cabinet_id','op','phone']
-    sql = "select %s from server" % ','.join(fields)
-    cur.execute(sql)
-    res = cur.fetchall()
-    data = [dict((k,row[i]) for i,k in enumerate(fields)) for row in res]
-    return render_template('server.html',data=data,info=session)
+    servers = get_list('server',fields_server)
+    cabinets = dict([(i['id'],i['name']) for i in get_list('cabinet',fields_cabinet)])
+    print "cabinets=",cabinets
+    print "servers=",servers
+    for srv in servers:
+        if srv['cabinet_id'] in cabinets:
+            srv['cabinet_id'] = cabinets[srv['cabinet_id']]
+    return render_template('server.html',data=servers,info=session)
 
 @app.route('/update_server',methods=['GET','POST'])
 def update_server():
@@ -85,4 +73,44 @@ def update_server():
         except Exception,e:
 	    errmsg = e
             return json.dumps({"code":1})
+
+@app.route('/add_idc',methods=['GET','POST'])
+def add_idc():
+    if not session.get('name',None):
+        return redirect('/login')
+    if request.method == 'GET':
+        id = request.args.get('id')
+        return render_template('add_idc.html')
+    if request.method == 'POST':
+        data = dict((k,v[0]) for k,v in dict(request.form).items())
+        print "data=",data
+        fields = ['name','name_cn','address','admin','phone','num']
+        res = get_list('idc',fields_idc,data['name'])
+        if res:
+            return json.dumps({'code':'1','errmsg':"The name of idc is duplicated,please choice another!"})
+        try:
+            insert('idc',fields,data)
+        except Exception,e:
+            errmsg = e
+            return json.dumps({"code":'1',"errmsg":errmsg})
+ 
+@app.route('/add_cabinet',methods=['GET','POST'])
+def add_cabinet():
+    if not session.get('name',None):
+        return redirect('/login')
+    if request.method == 'GET':
+        id = request.args.get('id')
+        return render_template('add_cabinet.html')
+    if request.method == 'POST':
+        data = dict((k,v[0]) for k,v in dict(request.form).items())
+
+@app.route('/add_server',methods=['GET','POST'])
+def add_server():
+    if not session.get('name',None):
+        return redirect('/login')
+    if request.method == 'GET':
+        id = request.args.get('id')
+        return render_template('add_server.html')
+    if request.method == 'POST':
+        data = dict((k,v[0]) for k,v in dict(request.form).items())
 

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block breadcrumb %}
+创建机房
+{% endblock %}
+
+{% block main %}
+
+<div class="col-sm-12">
+    <div class="ibox-content">
+        <div class="" id="content_start">
+            <form id="addidcForm" method="post" class="form-horizontal" action="">
+                <!--<input type="hidden" name="idc_id" id="idc_id">-->
+                <h3>基本</h3>
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="name">机房名</label>
+                    <div class="col-md-9">
+                        <input type="text" name="name" maxlength="128" class="form-control" placeholder="机房名" title="* required" required id="name" />
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="name_cn">中文名</label>
+                    <div class="col-md-9">
+                        <input type="text" name="name_cn" maxlength="128" class="form-control" placeholder="中文名" title="* required" required id="name_cn" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="address">地址</label>
+                    <div class="col-md-9">
+                        <input type="text" name="address" maxlength="128" class="form-control" placeholder="地址" title="* required" required id="address" />
+                    </div>
+                </div>
+    
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="admin">联系人</label>
+                    <div class="col-md-9">
+                        <input type="text" name="admin" maxlength="128" class="form-control" placeholder="联系人" title="* required" required id="admin" />
+                    </div>
+                </div>
+      
+		<div class="form-group">
+                    <label class="col-md-2 control-label" for="phone">联系电话</label>
+                    <div class="col-md-9">
+                        <input type="text" name="phone" maxlength="128" class="form-control" placeholder="联系电话" title="* required" required id="phone" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="num">机柜数量</label>
+                    <div class="col-md-9">
+                        <input type="text" name="num" maxlength="128" class="form-control" placeholder="机柜数量" title="* required" required id="num" />
+                    </div>
+                </div>
+
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-2">
+                        <a class="btn btn-white" type="reset">重置</a>
+                        <a id="addbtn" class="btn btn-primary">提交</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function(){
+    $('#addbtn').on('click',function(){
+        var str = $('#addidcForm').serialize()
+        $.post("/add_idc",str,function(data){
+            data = JSON.parse(data)
+            console.log(data)
+            if (data['code'] == 0){
+                alert(data['errmsg'])
+                location.href="/idc"
+            }else{
+                alert(data['errmsg'])
+                location.reload()
+            }
+        })
+        return false
+    })
+})
+</script>
+{% endblock %}

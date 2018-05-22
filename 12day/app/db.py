@@ -5,11 +5,12 @@
 
 import MySQLdb as mysql
 
-db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock',charset='utf8')
+#db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock',charset='utf8')
+db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock',charset='utf8')
 cur = db.cursor()
 
 # 获取表数据
-def get_list(fields,table,name=None):
+def get_list(table,fields,name=None):
     res = None
     if not name:
         sql = "select %s from %s" % (','.join(fields),table)
@@ -27,8 +28,19 @@ def get_list(fields,table,name=None):
 
 # 插入表数据
 def insert(table,fields,values):
-    sql = "INSERT INTO table (%s) VALUES (%s)" % (table,','.join(fields),values)
+    sql = "INSERT INTO %s(%s) VALUES (%s)" % (table,','.join(fields),','.join(["'%s'" % values[x] for x in fields]))
+    print "sql=",sql
     cur.execute(sql)
+
+# 删除表数据
+def delete(table,field,value):
+    sql = "delete from users where %s='%s'" % (field,value) 
+    cur.execute(sql)
+
+# 更新表数据
+#def update(table,field,value):
+#    sql = "update %s set %s='%s' where " % (table,field,value)
+#    cur.execute(sql)
 
 #res = get_list(['name','name_cn','password','mobile','email','role','status'],'users')
 #print "res=",res        

@@ -33,7 +33,7 @@ def login():
         if not data.get('name',None) or not data.get('password',None):
             return json.dumps({'code':'1','errmsg':"name or password not null"})
         fields = ['name','password','role','status']
-        res = get_list(fields,'users',name=data['name'])
+        res = get_list('users',fields,name=data['name'])
         if not res:       #如果这个用户在数据库中不存在，返回的结果就是res=(())
             return json.dumps({'code':1,'errmsg':'user does not exists'})
         if res['status'] == 1:
@@ -60,9 +60,9 @@ def userlist():
     role = session['role']
     fields = ['id','name','name_cn','mobile','email','role','status']
     if role == "admin":
-        data = get_list(fields,'users')
+        data = get_list('users',fields)
     else:
-        data = get_list(fields,users,name=name)
+        data = get_list('users',fields,name=name)
     return render_template('userlist.html',users=data,info=session)
 
 @app.route('/add_user',methods=['GET','POST'])
@@ -73,12 +73,11 @@ def add_user():
 	data = dict((k,v[0]) for k,v in dict(request.form).items())
         data['password'] = hashlib.md5(data['password']+salt).hexdigest()    # 对密码进行md5加密
         fields = ['name','name_cn','password','mobile','email','role','status']
-        res = get_list(fields,'users',data['name'])
+        res = get_list('users',fields,data['name'])
         if res:
             return json.dumps({'code':'1','errmsg':"username duplicate,please choice another!"})
         try:
-            values = ','.join(["'%s'" % data[x] for x in fields])
-            insert('users',fields,values)
+            insert('users',fields,data)
             return json.dumps({'code':'0','errmsg':"add user success"})
         except Exception,e:
             errmsg = e
@@ -89,9 +88,12 @@ def del_user():
     if not session.get('name',None):
         return redirect('/login')
     uid = request.args.get('id')
-    sql = "delete from users where id=%s" % uid
-    cur.execute(sql)
-    return json.dumps({'code':'0','errmsg':"delete user success"})
+    try:
+        delete('users','id',uid)
+        return json.dumps({'code':'0','errmsg':"delete user success"})
+    except Exception,e:
+        errmsg = e
+        return json.dumps({'code':1,'errmsg':'delete user failed!'})
     
 @app.route('/update_user',methods=['GET','POST'])
 def update():

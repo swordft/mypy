@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block breadcrumb %}
+创建机柜
+{% endblock %}
+
+{% block main %}
+
+<div class="col-sm-12">
+    <div class="ibox-content">
+        <div class="" id="content_start">
+            <form id="addUserForm" method="post" class="form-horizontal" action="">
+                <h3>基本</h3>
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="cab_username">机柜名</label>
+                    <div class="col-md-9">
+                        <input type="text" name="cab_name" maxlength="128" class="form-control" placeholder="机房名" title="* required" required id="cab_name" />
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="idc_id">所在机房</label>
+                    <div class="col-md-9">
+                        <input type="text" name="idc_id" maxlength="128" class="form-control" placeholder="中文名" title="* required" required id="idc_id" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="cab_u">U位</label>
+                    <div class="col-md-9">
+                        <input type="text" name="cab_u" maxlength="128" class="form-control" placeholder="U位" title="* required" required id="cab_u" />
+                    </div>
+                </div>
+    
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="cab_admin">电量</label>
+                    <div class="col-md-9">
+                        <input type="text" name="cab_power" maxlength="128" class="form-control" placeholder="电量" title="* required" required id="cab_power" />
+                    </div>
+                </div>
+      
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-2">
+                        <a class="btn btn-white" type="reset">重置</a>
+                        <a id="addbtn" class="btn btn-primary">提交</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function(){
+    $('#addbtn').on('click',function(){
+        var str = $('#addUserForm').serialize()
+        $.post("/add_user",str,function(data){
+            data = JSON.parse(data)
+            console.log(data)
+            if (data['code'] == 0){
+                alert(data['errmsg'])
+                location.href="/userlist"
+            }else{
+                alert(data['errmsg'])
+                location.reload()
+            }
+        })
+        return false
+    })
+})
+</script>
+{% endblock %}
