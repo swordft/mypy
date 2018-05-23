@@ -5,9 +5,8 @@
 
 import MySQLdb as mysql
 
-db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock',charset='utf8')
-#db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock',charset='utf8')
-#db.autocommit = True
+#db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock',charset='utf8')
+db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock',charset='utf8')
 cur = db.cursor()
 
 # 获取表数据
@@ -30,13 +29,15 @@ def get_list(table,fields,name=None):
 # 插入表数据
 def insert(table,fields,values):
     sql = "INSERT INTO %s(%s) VALUES (%s)" % (table,','.join(fields),','.join(["'%s'" % values[x] for x in fields]))
-    print "sql=",sql
     cur.execute(sql)
+    db.commit()
 
 # 删除表数据
 def delete(table,field,value):
-    sql = "delete from users where %s='%s'" % (field,value) 
+    sql = "delete from %s where %s='%s'" % (table,field,value) 
+    print "sql=",sql
     cur.execute(sql)
+    db.commit()
 
 # 更新表数据
 #def update(table,field,value):

@@ -120,11 +120,53 @@ def del_idc():
     if not session.get('name',None):
         return redirect('/login')
     id = request.args.get('id')
-    print "id=",id
     try:
         delete('idc','id',id)
         return json.dumps({'code':'0','errmsg':"delete idc success"})
     except Exception,e:
         errmsg = e
         return json.dumps({'code':1,'errmsg':'delete idc failed!'})
+
+@app.route('/update_idc',methods=['GET','POST'])
+def update_idc():
+    if not session.get('name',None):
+        return redirect('/login')
+    name = session['name']
+    role = session['role']
+    info = {'name':name,'role':role}
+    if request.method == 'POST':
+        data = dict((k,v[0]) for k,v in dict(request.form).items())
+        #if info['role'] == "admin":
+        #    fields = ['id','name','name_cn','address','admin','phone','num'] 
+        #else:
+        #    fields = ['id','name','name_cn','password','mobile','email']
+        data = dict((f,data[f]) for f in fields)
+        conditions = ["%s='%s'" % (k,v) for k,v in data.items()]
+        try:
+            sql = "update users set %s where id=%s" % (','.join(conditions),data['id'])
+            cur.execute(sql)
+            return json.dumps({"code":0,"errmsg":"update success"})
+        except Exception,e:
+	    errmsg = e
+            return json.dumps({"code":1})
+
+@app.route('/idc_getbyid')
+def idc_getbyid():
+    if not session.get('name',None):
+        return redirect('/login')
+    id = request.args.get('id')
+    if not id:
+        return json.dumps({"code":1,"errmsg":"must have a condition"})
+    condition = 'id="%s"' % id
+    #fields = ['id','name','name_cn','password','email','mobile','role','status']
+    try:
+        sql = "select %s from idc where %s" % (','.join(fields_idc),condition)
+        print "sql=",sql
+        cur.execute(sql)
+        res = cur.fetchone()
+        data = {}
+        data = dict((k,res[i]) for i,k in enumerate(fields_idc))
+        return json.dumps({"code":0,"result":data})
+    except:
+        return json.dumps({"code":1,"errmsg":"select userinfo failed"})
 
