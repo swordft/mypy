@@ -41,25 +41,31 @@
 </div>
 {% endblock %}
 
-{% block modal %}
-<!--更新模态框-->
-<div id="deleteModal" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">删除配置项</h4>
-      </div>
-      <div class="modal-body">
-        <p>是否删除该配置项?</p>
-      </div>
-      <div class="modal-footer">
-        <button id="cancel_modal_btn" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-        <button id="confirm_modal_btn" type="button" class="btn btn-primary">确认</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
+{% block scripts %}
+<script>
+$(".del").click(function(){
+    var id = $(this).attr('data-id')
+    var url = "/del_idc?id="+id
+    console.log(url)
+    swal({ 
+        title: "确定删除吗？", 
+        text: "你将删除idc配置项!", 
+        type: "warning",
+        showCancelButton: true, 
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "确定删除！", 
+        closeOnConfirm: false
+    },
+        function(){
+            $.getJSON(url,function(data){
+                if(data['code']==0){
+                    swal("删除！", "配置项已经被删除。", "success");
+                    location.reload()
+                }else{
+                    alert(data['errmsg'])
+                }
+            })
+        })
+})
+</script>
 {% endblock %}
-

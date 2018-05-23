@@ -3,6 +3,7 @@
 
 from flask import Flask,request,render_template,redirect,session
 from . import app
+import MySQLdb as mysql
 import json
 import traceback
 from db import *
@@ -83,13 +84,13 @@ def add_idc():
         return render_template('add_idc.html')
     if request.method == 'POST':
         data = dict((k,v[0]) for k,v in dict(request.form).items())
-        print "data=",data
         fields = ['name','name_cn','address','admin','phone','num']
         res = get_list('idc',fields_idc,data['name'])
         if res:
             return json.dumps({'code':'1','errmsg':"The name of idc is duplicated,please choice another!"})
         try:
             insert('idc',fields,data)
+            return json.dumps({'code':'0','errmsg':"add idc success"})
         except Exception,e:
             errmsg = e
             return json.dumps({"code":'1',"errmsg":errmsg})
@@ -113,4 +114,17 @@ def add_server():
         return render_template('add_server.html')
     if request.method == 'POST':
         data = dict((k,v[0]) for k,v in dict(request.form).items())
+
+@app.route('/del_idc')
+def del_idc():
+    if not session.get('name',None):
+        return redirect('/login')
+    id = request.args.get('id')
+    print "id=",id
+    try:
+        delete('idc','id',id)
+        return json.dumps({'code':'0','errmsg':"delete idc success"})
+    except Exception,e:
+        errmsg = e
+        return json.dumps({'code':1,'errmsg':'delete idc failed!'})
 

@@ -74,12 +74,19 @@ $(document).ready(function(){
         $.post("/add_idc",str,function(data){
             data = JSON.parse(data)
             console.log(data)
-            if (data['code'] == 0){
-                alert(data['errmsg'])
-                location.href="/idc"
+            if (data['code'] == '0'){
+                swal({
+                    title:"创建成功",
+                    type:"success",
+                    confirmButtonText:"OK"},function(){
+                        location.href="/idc"
+                    })
             }else{
-                alert(data['errmsg'])
-                location.reload()
+                swal({
+                    title:"创建失败",
+                    type:"error",
+                    confirmButtonText:"退出"
+                }) 
             }
         })
         return false
