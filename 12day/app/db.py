@@ -29,6 +29,7 @@ def get_list(table,fields,name=None):
 # 插入表数据
 def insert(table,fields,values):
     sql = "INSERT INTO %s(%s) VALUES (%s)" % (table,','.join(fields),','.join(["'%s'" % values[x] for x in fields]))
+    print "sql=",sql
     cur.execute(sql)
     db.commit()
 

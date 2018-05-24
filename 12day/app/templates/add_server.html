@@ -8,47 +8,48 @@
 <div class="col-sm-12">
     <div class="ibox-content">
         <div class="" id="content_start">
-            <form id="addUserForm" method="post" class="form-horizontal" action="">
+            <form id="addServerForm" method="post" class="form-horizontal" action="">
+                <!--<input type="hidden" name="idc_id" id="idc_id">-->
                 <h3>基本</h3>
                 <div class="form-group">
-                    <label class="col-md-2 control-label" for="srv_hostname">主机名</label>
+                    <label class="col-md-2 control-label" for="hostname">主机名</label>
                     <div class="col-md-9">
-                        <input type="text" name="srv_hostname" maxlength="128" class="form-control" placeholder="主机名" title="* required" required id="srv_hostname" />
+                        <input type="text" name="hostname" maxlength="128" class="form-control" placeholder="主机名" title="* required" required id="hostname" />
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label class="col-md-2 control-label" for="srv_outerip">外部IP</label>
+                    <label class="col-md-2 control-label" for="inter_ip">内部IP</label>
                     <div class="col-md-9">
-                        <input type="text" name="srv_outerip" maxlength="128" class="form-control" placeholder="外部IP" title="* required" required id="srv_outerip" />
+                        <input type="text" name="inter_ip" maxlength="128" class="form-control" placeholder="内部IP" title="* required" required id="inter_ip" />
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-2 control-label" for="srv_interip">内部IP</label>
+                    <label class="col-md-2 control-label" for="outer_ip">外部IP</label>
                     <div class="col-md-9">
-                        <input type="text" name="srv_interip" maxlength="128" class="form-control" placeholder="内部IP" title="* required" required id="srv_interip" />
+                        <input type="text" name="outer_ip" maxlength="128" class="form-control" placeholder="外部IP" title="* required" required id="outer_ip" />
                     </div>
                 </div>
     
                 <div class="form-group">
-                    <label class="col-md-2 control-label" for="cab_id">所在机柜</label>
+                    <label class="col-md-2 control-label" for="cabinet_id">所在机柜</label>
                     <div class="col-md-9">
-                        <input type="text" name="cab_id" maxlength="128" class="form-control" placeholder="所在机柜" title="* required" required id="cab_id" />
+                        <input type="text" name="cabinet_id" maxlength="128" class="form-control" placeholder="所在机柜" title="* required" required id="cabinet_id" />
                     </div>
                 </div>
-     
+      
 		<div class="form-group">
-                    <label class="col-md-2 control-label" for="srv_admin">负责人</label>
+                    <label class="col-md-2 control-label" for="op">负责人</label>
                     <div class="col-md-9">
-                        <input type="text" name="srv_admin" maxlength="128" class="form-control" placeholder="负责人" title="* required" required id="srv_admin" />
+                        <input type="text" name="op" maxlength="128" class="form-control" placeholder="负责人" title="* required" required id="op" />
                     </div>
                 </div>
- 
-		<div class="form-group">
-                    <label class="col-md-2 control-label" for="srv_mobile">联系电话</label>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="phone">联系电话</label>
                     <div class="col-md-9">
-                        <input type="text" name="srv_mobile" maxlength="128" class="form-control" placeholder="联系电话" title="* required" required id="srv_mobile" />
+                        <input type="text" name="phone" maxlength="128" class="form-control" placeholder="联系电话" title="* required" required id="phone" />
                     </div>
                 </div>
 
@@ -69,16 +70,23 @@
 <script>
 $(document).ready(function(){
     $('#addbtn').on('click',function(){
-        var str = $('#addUserForm').serialize()
-        $.post("/add_user",str,function(data){
+        var str = $('#addServerForm').serialize()
+        $.post("/add_server",str,function(data){
             data = JSON.parse(data)
             console.log(data)
-            if (data['code'] == 0){
-                alert(data['errmsg'])
-                location.href="/userlist"
+            if (data['code'] == '0'){
+                swal({
+                    title:"创建成功",
+                    type:"success",
+                    confirmButtonText:"OK"},function(){
+                        location.href="/server"
+                    })
             }else{
-                alert(data['errmsg'])
-                location.reload()
+                swal({
+                    title:"创建失败",
+                    type:"error",
+                    confirmButtonText:"退出"
+                }) 
             }
         })
         return false

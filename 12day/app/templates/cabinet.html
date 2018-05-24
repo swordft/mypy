@@ -38,24 +38,124 @@
 {% endblock %}
 
 {% block modal %}
-<!--更新模态框-->
-<div id="deleteModal" class="modal fade" tabindex="-1" role="dialog">
+<div id="updateModal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">删除配置项</h4>
+        <h4 class="modal-title">更新机柜</h4>
       </div>
       <div class="modal-body">
-        <p>是否删除该配置项?</p>
-      </div>
+          <form id="updateCabinetForm" method="post" class="form-horizontal" action="">
+                <input type="hidden" name="id" id="id">
+                <h3>基本</h3>
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="name">机柜名</label>
+                    <div class="col-md-9">
+                        <input type="text" name="name" maxlength="128" class="form-control" placeholder="机柜名" title="* required" required id="name" />
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="idc_id">所在机房</label>
+                    <div class="col-md-9">
+                        <input type="text" name="idc_id" maxlength="128" class="form-control" placeholder="所在机房" title="* required" required id="idc_id" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="u_num">U位</label>
+                    <div class="col-md-9">
+                        <input type="text" name="u_num" maxlength="128" class="form-control" placeholder="U位" title="* required" required id="u_num" />
+                    </div>
+                </div>
+    
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="power">电量</label>
+                    <div class="col-md-9">
+                        <input type="text" name="power" maxlength="128" class="form-control" placeholder="电量" title="* required" required id="power" />
+                    </div>
+                </div>
+            </form>
+      </div><!--modal-body-->
       <div class="modal-footer">
-        <button id="cancel_modal_btn" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-        <button id="confirm_modal_btn" type="button" class="btn btn-primary">确认</button>
+        <button id="updatecabinet_cancel_modal_btn" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button id="updatecabinet_confirm_modal_btn" type="button" class="btn btn-primary">提交</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
 {% endblock %}
 
+{% block scripts %}
+<script>
+$(".del").click(function(){
+    var id = $(this).attr('data-id')
+    var url = "/del_cabinet?id="+id
+    console.log(url)
+    swal({ 
+        title: "确定删除吗？", 
+        text: "你将删除机柜配置项!", 
+        type: "warning",
+        showCancelButton: true, 
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "确定删除！", 
+        closeOnConfirm: false
+    },
+        function(){
+            $.getJSON(url,function(data){
+                if(data['code']==0){
+                    swal("删除！", "配置项已经被删除。", "success");
+                    location.reload()
+                }else{
+                    alert(data['errmsg'])
+                }
+            })
+        })
+})
+
+$(".update").click(function(){
+    $('#updateModal').modal('show')
+    var id = $(this).attr('data-id')
+    var url = "/cabinet_getbyid?id="+id
+    $.getJSON(url,function(data){
+        if(data['code']==0){
+            data = data['result']
+            $('#id').val(data['id'])
+            $('#name').val(data['name'])
+            $('#idc_id').val(data['idc_id'])
+            $('#u_num').val(data['n_num'])
+            $('#power').val(data['power'])
+        }else{
+            alert(data['errmsg'])
+        }
+    })
+})
+
+$("#updatecabinet_confirm_modal_btn").click(function(){
+    var str = $('#updateCabinetForm').serialize()
+    console.log(str)
+    $.post("/update_cabinet",str,function(data){
+        console.log(data)
+        data = JSON.parse(data)
+        console.log(data)
+        if (data['code'] == '0'){
+            swal({
+                title:"更新成功",
+                type:"success",
+                confirmButtonText:"OK"},function(){
+                    location.href="/cabinet"
+                })
+        }else{
+            swal({
+                title:"更新失败",
+                type:"error",
+                confirmButtonText:"退出"
+            }) 
+        }
+    })
+    return false
+})
+
+</script>
+{% endblock %}

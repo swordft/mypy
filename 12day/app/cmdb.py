@@ -104,6 +104,17 @@ def add_cabinet():
         return render_template('add_cabinet.html')
     if request.method == 'POST':
         data = dict((k,v[0]) for k,v in dict(request.form).items())
+        fields = ['name','idc_id','u_num','power']
+        res = get_list('cabinet',fields,data['name'])
+        if res:
+            return json.dumps({'code':'1','errmsg':"The name of cabinet is duplicated,please choice another!"})
+        try:
+            insert('cabinet',fields,data)
+            return json.dumps({'code':'0','errmsg':"add cabinet success"})
+        except Exception,e:
+            errmsg = e
+            return json.dumps({"code":'1',"errmsg":errmsg})
+
 
 @app.route('/add_server',methods=['GET','POST'])
 def add_server():
@@ -114,6 +125,17 @@ def add_server():
         return render_template('add_server.html')
     if request.method == 'POST':
         data = dict((k,v[0]) for k,v in dict(request.form).items())
+        fields = ['hostname','inter_ip','outer_ip','cabinet_id','op','phone']
+        res = get_list('server',fields,data['hostname'])
+        if res:
+            return json.dumps({'code':'1','errmsg':"The name of server is duplicated,please choice another!"})
+        try:
+            insert('server',fields,data)
+            return json.dumps({'code':'0','errmsg':"add server success"})
+        except Exception,e:
+            errmsg = e
+            return json.dumps({"code":'1',"errmsg":errmsg})
+
 
 @app.route('/del_idc')
 def del_idc():
@@ -126,6 +148,30 @@ def del_idc():
     except Exception,e:
         errmsg = e
         return json.dumps({'code':1,'errmsg':'delete idc failed!'})
+
+@app.route('/del_cabinet')
+def del_cabinet():
+    if not session.get('name',None):
+        return redirect('/login')
+    id = request.args.get('id')
+    try:
+        delete('cabinet','id',id)
+        return json.dumps({'code':'0','errmsg':"delete cabinet success"})
+    except Exception,e:
+        errmsg = e
+        return json.dumps({'code':1,'errmsg':'delete cabinet failed!'})
+
+@app.route('/del_server')
+def del_server():
+    if not session.get('name',None):
+        return redirect('/login')
+    id = request.args.get('id')
+    try:
+        delete('server','id',id)
+        return json.dumps({'code':'0','errmsg':"delete server success"})
+    except Exception,e:
+        errmsg = e
+        return json.dumps({'code':1,'errmsg':'delete server failed!'})
 
 @app.route('/update_idc',methods=['GET','POST'])
 def update_idc():
@@ -140,10 +186,11 @@ def update_idc():
         #    fields = ['id','name','name_cn','address','admin','phone','num'] 
         #else:
         #    fields = ['id','name','name_cn','password','mobile','email']
-        data = dict((f,data[f]) for f in fields)
+        data = dict((f,data[f]) for f in fields_idc)
         conditions = ["%s='%s'" % (k,v) for k,v in data.items()]
         try:
-            sql = "update users set %s where id=%s" % (','.join(conditions),data['id'])
+            sql = "update %s set %s where id=%s" % ('idc',','.join(conditions),data['id'])
+            print "sql=",sql
             cur.execute(sql)
             return json.dumps({"code":0,"errmsg":"update success"})
         except Exception,e:
@@ -158,10 +205,8 @@ def idc_getbyid():
     if not id:
         return json.dumps({"code":1,"errmsg":"must have a condition"})
     condition = 'id="%s"' % id
-    #fields = ['id','name','name_cn','password','email','mobile','role','status']
     try:
         sql = "select %s from idc where %s" % (','.join(fields_idc),condition)
-        print "sql=",sql
         cur.execute(sql)
         res = cur.fetchone()
         data = {}
