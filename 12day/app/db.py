@@ -5,21 +5,22 @@
 
 import MySQLdb as mysql
 
-db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock',charset='utf8')
-#db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock',charset='utf8')
+#db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/data/mysql/mysql.sock',charset='utf8')
+db = mysql.connect(user='root',passwd='xiaofang',db='reboot',unix_socket='/var/lib/mysql/mysql.sock',charset='utf8')
 cur = db.cursor()
 
 # 获取表数据
-def get_list(table,fields,name=None):
+def get_list(table,fields,condition=None):
     res = None
-    if not name:
+    if not condition:
         sql = "select %s from %s" % (','.join(fields),table)
         cur.execute(sql)
         result = cur.fetchall()
         if result:
             res = [dict((k,row[i]) for i,k in enumerate(fields)) for row in result]
     else:
-        sql = "select %s from %s where name='%s'" % (','.join(fields),table,name)
+        sql = "select %s from %s where %s" % (','.join(fields),table,condition)
+        print "sql=",sql
         cur.execute(sql)
         result = cur.fetchone()
         if result:
@@ -36,7 +37,6 @@ def insert(table,fields,values):
 # 删除表数据
 def delete(table,field,value):
     sql = "delete from %s where %s='%s'" % (table,field,value) 
-    print "sql=",sql
     cur.execute(sql)
     db.commit()
 

@@ -49,6 +49,7 @@ def server():
             srv['cabinet_id'] = cabinets[srv['cabinet_id']]
     return render_template('server.html',data=servers,info=session)
 
+# 添加配置项
 @app.route('/add_idc',methods=['GET','POST'])
 def add_idc():
     if not session.get('name',None):
@@ -109,7 +110,7 @@ def add_server():
             errmsg = e
             return json.dumps({"code":'1',"errmsg":errmsg})
 
-
+# 删除配置项
 @app.route('/del_idc')
 def del_idc():
     if not session.get('name',None):
@@ -146,6 +147,7 @@ def del_server():
         errmsg = e
         return json.dumps({'code':1,'errmsg':'delete server failed!'})
 
+# 更新配置项
 @app.route('/update_idc',methods=['GET','POST'])
 def update_idc():
     if not session.get('name',None):
@@ -223,9 +225,10 @@ def idc_getbyid():
         return json.dumps({"code":1,"errmsg":"must have a condition"})
     condition = 'id="%s"' % id
     try:
-        sql = "select %s from idc where %s" % (','.join(fields_idc),condition)
-        cur.execute(sql)
-        res = cur.fetchone()
+        #sql = "select %s from idc where %s" % (','.join(fields_idc),condition)
+        #cur.execute(sql)
+        #res = cur.fetchone()
+        res = get_list('idc',','.join(fields_idc),condition)
         data = {}
         data = dict((k,res[i]) for i,k in enumerate(fields_idc))
         return json.dumps({"code":0,"result":data})
@@ -241,7 +244,8 @@ def cabinet_getbyid():
         return json.dumps({"code":1,"errmsg":"must have a condition"})
     condition = 'id="%s"' % id
     try:
-        sql = "select %s from cabinet where %s" % (','.join(fields_idc),condition)
+        sql = "select %s from cabinet where %s" % (','.join(fields_cabinet),condition)
+        print "sql=",sql
         cur.execute(sql)
         res = cur.fetchone()
         data = {}
