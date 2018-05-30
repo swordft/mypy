@@ -9,7 +9,7 @@
     <div class="ibox-content">
         <div class="" id="content_start">
             <form id="addServerForm" method="post" class="form-horizontal" action="">
-                <!--<input type="hidden" name="idc_id" id="idc_id">-->
+                <!--<input type="hidden" name="cabinet_id" id="cabinet_id">-->
                 <h3>基本</h3>
                 <div class="form-group">
                     <label class="col-md-2 control-label" for="hostname">主机名</label>
@@ -35,7 +35,11 @@
                 <div class="form-group">
                     <label class="col-md-2 control-label" for="cabinet_id">所在机柜</label>
                     <div class="col-md-9">
-                        <input type="text" name="cabinet_id" maxlength="128" class="form-control" placeholder="所在机柜" title="* required" required id="cabinet_id" />
+                       <select name="cabinet_id" class="form-control" title="" id="cabinet_id">
+                        {% for cabinet in cabinets %}
+                            <option value="{{ cabinet.id }}">{{ cabinet.name }}</option>
+                        {% endfor %}
+                    </select> 
                     </div>
                 </div>
       

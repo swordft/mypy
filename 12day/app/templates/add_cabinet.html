@@ -21,7 +21,11 @@
                 <div class="form-group">
                     <label class="col-md-2 control-label" for="idc_id">所在机房</label>
                     <div class="col-md-9">
-                        <input type="text" name="idc_id" maxlength="128" class="form-control" placeholder="所在机房" title="* required" required id="idc_id" />
+                    <select name="idc_id" class="form-control" title="" id="idc_id">
+                        {% for idc in idcs %}
+                            <option value="{{ idc.id }}">{{ idc.name }}</option>
+                        {% endfor %}
+                    </select>
                     </div>
                 </div>
 
@@ -71,6 +75,7 @@ $(document).ready(function(){
                 swal({
                     title:"创建失败",
                     type:"error",
+                    text:data['errmsg'],
                     confirmButtonText:"退出"
                 }) 
             }

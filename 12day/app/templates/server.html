@@ -27,7 +27,7 @@
 	        <td class="text-center">{{ server.hostname }}</td>
 	    	<td class="text-center">{{ server.inter_ip }}</td>
 	        <td class="text-center">{{ server.outer_ip }}</td>
-	        <td class="text-center">{{ server.server_id }}</td>
+	        <td class="text-center">{{ server.cabinet_id }}</td>
 	        <td class="text-center">{{ server.op }}</td>
 	        <td class="text-center">{{ server.phone }}</td>
 	    	<td class="text-center">
@@ -53,7 +53,6 @@
       <div class="modal-body">
           <form id="updateServerForm" method="post" class="form-horizontal" action="">
                 <input type="hidden" name="id" id="id">
-                <h3>基本</h3>
                 <div class="form-group">
                     <label class="col-md-2 control-label" for="hostname">主机名</label>
                     <div class="col-md-9">
@@ -93,14 +92,6 @@
                     <label class="col-md-2 control-label" for="phone">联系电话</label>
                     <div class="col-md-9">
                         <input type="text" name="phone" maxlength="128" class="form-control" placeholder="联系电话" title="* required" required id="phone" />
-                    </div>
-                </div>
-
-                <div class="hr-line-dashed"></div>
-                <div class="form-group">
-                    <div class="col-sm-4 col-sm-offset-2">
-                        <a class="btn btn-white" type="reset">重置</a>
-                        <a id="addbtn" class="btn btn-primary">提交</a>
                     </div>
                 </div>
             </form>

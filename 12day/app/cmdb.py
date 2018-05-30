@@ -32,7 +32,7 @@ def cabinet():
     for cab in cabinets:
         if cab['idc_id'] in idcs:
             cab['idc_id'] = idcs[cab['idc_id']]
-    return render_template('cabinet.html',data=cabinets,info=session)
+    return render_template('cabinet.html',idcs=idcs,data=cabinets,info=session)
 
 @app.route('/server')
 def server():
@@ -42,12 +42,10 @@ def server():
     role = session['role']
     servers = get_list('server',fields_server)
     cabinets = dict([(i['id'],i['name']) for i in get_list('cabinet',fields_cabinet)])
-    print "cabinets=",cabinets
-    print "servers=",servers
     for srv in servers:
         if srv['cabinet_id'] in cabinets:
             srv['cabinet_id'] = cabinets[srv['cabinet_id']]
-    return render_template('server.html',data=servers,info=session)
+    return render_template('server.html',cabinets=cabinets,data=servers,info=session)
 
 # 添加配置项
 @app.route('/add_idc',methods=['GET','POST'])
@@ -60,7 +58,8 @@ def add_idc():
     if request.method == 'POST':
         data = dict((k,v[0]) for k,v in dict(request.form).items())
         fields = ['name','name_cn','address','admin','phone','num']
-        res = get_list('idc',fields_idc,data['name'])
+        condition = 'name="%s"' % data['name']
+        res = get_list('idc',fields_idc,condition)
         if res:
             return json.dumps({'code':'1','errmsg':"The name of idc is duplicated,please choice another!"})
         try:
@@ -76,11 +75,13 @@ def add_cabinet():
         return redirect('/login')
     if request.method == 'GET':
         id = request.args.get('id')
-        return render_template('add_cabinet.html')
+        idcs = get_list('idc',fields_idc)
+        return render_template('add_cabinet.html',idcs=idcs)
     if request.method == 'POST':
         data = dict((k,v[0]) for k,v in dict(request.form).items())
         fields = ['name','idc_id','u_num','power']
-        res = get_list('cabinet',fields,data['name'])
+        condition = 'name="%s"' % data['name']
+        res = get_list('cabinet',fields,condition)
         if res:
             return json.dumps({'code':'1','errmsg':"The name of cabinet is duplicated,please choice another!"})
         try:
@@ -96,11 +97,13 @@ def add_server():
         return redirect('/login')
     if request.method == 'GET':
         id = request.args.get('id')
-        return render_template('add_server.html')
+        cabinets = get_list('cabinet',fields_cabinet)
+        return render_template('add_server.html',cabinets=cabinets)
     if request.method == 'POST':
         data = dict((k,v[0]) for k,v in dict(request.form).items())
         fields = ['hostname','inter_ip','outer_ip','cabinet_id','op','phone']
-        res = get_list('server',fields,data['hostname'])
+        condition = 'hostname="%s"' % data['hostname']
+        res = get_list('server',fields,condition)
         if res:
             return json.dumps({'code':'1','errmsg':"The name of server is duplicated,please choice another!"})
         try:
@@ -225,12 +228,7 @@ def idc_getbyid():
         return json.dumps({"code":1,"errmsg":"must have a condition"})
     condition = 'id="%s"' % id
     try:
-        #sql = "select %s from idc where %s" % (','.join(fields_idc),condition)
-        #cur.execute(sql)
-        #res = cur.fetchone()
-        res = get_list('idc',','.join(fields_idc),condition)
-        data = {}
-        data = dict((k,res[i]) for i,k in enumerate(fields_idc))
+        data = get_list('idc',fields_idc,condition)
         return json.dumps({"code":0,"result":data})
     except:
         return json.dumps({"code":1,"errmsg":"select userinfo failed"})
@@ -244,13 +242,12 @@ def cabinet_getbyid():
         return json.dumps({"code":1,"errmsg":"must have a condition"})
     condition = 'id="%s"' % id
     try:
-        sql = "select %s from cabinet where %s" % (','.join(fields_cabinet),condition)
-        print "sql=",sql
-        cur.execute(sql)
-        res = cur.fetchone()
-        data = {}
-        data = dict((k,res[i]) for i,k in enumerate(fields_cabinet))
-        return json.dumps({"code":0,"result":data})
+        data = get_list('cabinet',fields_cabinet,condition)
+        #idcs = dict([(i['name_cn'],i['id']) for i in get_list('idc',fields_idc)])
+        idcs = ['fangtao','wjx','zzl']
+        print "data=",data
+        print "idcs=",idcs
+        return json.dumps({"code":0,"result":data,"idcs":idcs})
     except:
         return json.dumps({"code":1,"errmsg":"select userinfo failed"})
 
@@ -263,11 +260,7 @@ def server_getbyid():
         return json.dumps({"code":1,"errmsg":"must have a condition"})
     condition = 'id="%s"' % id
     try:
-        sql = "select %s from server where %s" % (','.join(fields_server),condition)
-        cur.execute(sql)
-        res = cur.fetchone()
-        data = {}
-        data = dict((k,res[i]) for i,k in enumerate(fields_server))
+        data = get_list('server',fields_server,condition) 
         return json.dumps({"code":0,"result":data})
     except:
         return json.dumps({"code":1,"errmsg":"select userinfo failed"})

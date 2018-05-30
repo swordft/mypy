@@ -30,7 +30,6 @@ def login():
             return json.dumps({'code':'1','errmsg':"name or password not null"})
         fields = ['name','password','role','status']
         condition = 'name="%s"' % data['name']
-        print "condition=",condition
         res = get_list('users',fields,condition)
         if not res:       #如果这个用户在数据库中不存在，返回的结果就是res=(())
             return json.dumps({'code':1,'errmsg':'user does not exists'})

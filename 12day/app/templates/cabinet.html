@@ -48,7 +48,6 @@
       <div class="modal-body">
           <form id="updateCabinetForm" method="post" class="form-horizontal" action="">
                 <input type="hidden" name="id" id="id">
-                <h3>基本</h3>
                 <div class="form-group">
                     <label class="col-md-2 control-label" for="name">机柜名</label>
                     <div class="col-md-9">
@@ -59,7 +58,11 @@
                 <div class="form-group">
                     <label class="col-md-2 control-label" for="idc_id">所在机房</label>
                     <div class="col-md-9">
-                        <input type="text" name="idc_id" maxlength="128" class="form-control" placeholder="所在机房" title="* required" required id="idc_id" />
+                        <select name="idc_id" class="form-control" title="" id="idc_id">
+                        {% for idc in idcs %}
+                            <option value="{{ idc }}">{{ idc }}</option>
+                        {% endfor %}
+                        </select>
                     </div>
                 </div>
 
@@ -121,9 +124,11 @@ $(".update").click(function(){
     $.getJSON(url,function(data){
         if(data['code']==0){
             data = data['result']
+            idcs = data['idcs']
+            console.log(data)
             $('#id').val(data['id'])
             $('#name').val(data['name'])
-            $('#idc_id').val(data['idc_id'])
+            //$('#idc_id').val('fangtao')
             $('#u_num').val(data['n_num'])
             $('#power').val(data['power'])
         }else{
