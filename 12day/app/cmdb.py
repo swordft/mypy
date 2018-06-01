@@ -29,10 +29,11 @@ def cabinet():
     role = session.get('role')
     cabinets = get_list('cabinet',fields_cabinet)
     idcs = dict([(i['id'],i['name_cn']) for i in get_list('idc',fields_idc)])
+    idc_names = idcs.values()
     for cab in cabinets:
         if cab['idc_id'] in idcs:
             cab['idc_id'] = idcs[cab['idc_id']]
-    return render_template('cabinet.html',idcs=idcs,data=cabinets,info=session)
+    return render_template('cabinet.html',idc_names=idc_names,idcs=idcs,data=cabinets,info=session)
 
 @app.route('/server')
 def server():
@@ -42,10 +43,11 @@ def server():
     role = session['role']
     servers = get_list('server',fields_server)
     cabinets = dict([(i['id'],i['name']) for i in get_list('cabinet',fields_cabinet)])
+    cabinet_names = cabinets.values()
     for srv in servers:
         if srv['cabinet_id'] in cabinets:
             srv['cabinet_id'] = cabinets[srv['cabinet_id']]
-    return render_template('server.html',cabinets=cabinets,data=servers,info=session)
+    return render_template('server.html',cabinet_names=cabinet_names,cabinets=cabinets,data=servers,info=session)
 
 # 添加配置项
 @app.route('/add_idc',methods=['GET','POST'])
@@ -164,7 +166,6 @@ def update_idc():
         conditions = ["%s='%s'" % (k,v) for k,v in data.items()]
         try:
             sql = "update %s set %s where id=%s" % ('idc',','.join(conditions),data['id'])
-            print "sql=",sql
             cur.execute(sql)
             return json.dumps({"code":0,"errmsg":"update success"})
         except Exception,e:
@@ -185,10 +186,13 @@ def update_cabinet():
         #else:
         #    fields = ['id','name','name_cn','password','mobile','email']
         data = dict((f,data[f]) for f in fields_cabinet)
+        idcs = dict([(i['id'],i['name_cn']) for i in get_list('idc',fields_idc)])
+        for i in idcs:
+            if data['idc_id'] == idcs[i]:
+                data['idc_id'] = i
         conditions = ["%s='%s'" % (k,v) for k,v in data.items()]
         try:
             sql = "update %s set %s where id=%s" % ('cabinet',','.join(conditions),data['id'])
-            print "sql=",sql
             cur.execute(sql)
             return json.dumps({"code":0,"errmsg":"update success"})
         except Exception,e:
@@ -209,10 +213,13 @@ def update_server():
         #else:
         #    fields = ['id','name','name_cn','password','mobile','email']
         data = dict((f,data[f]) for f in fields_server)
+        cabinets = dict([(i['id'],i['name']) for i in get_list('cabinet',fields_cabinet)])
+        for i in cabinets:
+            if data['cabinet_id'] == cabinets[i]:
+                data['cabinet_id'] = i
         conditions = ["%s='%s'" % (k,v) for k,v in data.items()]
         try:
-            sql = "update %s set %s where id=%s" % ('cabinet',','.join(conditions),data['id'])
-            print "sql=",sql
+            sql = "update %s set %s where id=%s" % ('server',','.join(conditions),data['id'])
             cur.execute(sql)
             return json.dumps({"code":0,"errmsg":"update success"})
         except Exception,e:
@@ -243,11 +250,7 @@ def cabinet_getbyid():
     condition = 'id="%s"' % id
     try:
         data = get_list('cabinet',fields_cabinet,condition)
-        #idcs = dict([(i['name_cn'],i['id']) for i in get_list('idc',fields_idc)])
-        idcs = ['fangtao','wjx','zzl']
-        print "data=",data
-        print "idcs=",idcs
-        return json.dumps({"code":0,"result":data,"idcs":idcs})
+        return json.dumps({"code":0,"result":data})
     except:
         return json.dumps({"code":1,"errmsg":"select userinfo failed"})
 

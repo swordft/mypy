@@ -20,7 +20,6 @@ def get_list(table,fields,condition=None):
             res = [dict((k,row[i]) for i,k in enumerate(fields)) for row in result]
     else:
         sql = "select %s from %s where %s" % (','.join(fields),table,condition)
-        print "sql=",sql
         cur.execute(sql)
         result = cur.fetchone()
         if result:
@@ -30,7 +29,6 @@ def get_list(table,fields,condition=None):
 # 插入表数据
 def insert(table,fields,values):
     sql = "INSERT INTO %s(%s) VALUES (%s)" % (table,','.join(fields),','.join(["'%s'" % values[x] for x in fields]))
-    print "sql=",sql
     cur.execute(sql)
     db.commit()
 

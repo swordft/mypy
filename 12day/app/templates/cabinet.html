@@ -59,7 +59,7 @@
                     <label class="col-md-2 control-label" for="idc_id">所在机房</label>
                     <div class="col-md-9">
                         <select name="idc_id" class="form-control" title="" id="idc_id">
-                        {% for idc in idcs %}
+                        {% for idc in idc_names %}
                             <option value="{{ idc }}">{{ idc }}</option>
                         {% endfor %}
                         </select>
@@ -122,14 +122,13 @@ $(".update").click(function(){
     var id = $(this).attr('data-id')
     var url = "/cabinet_getbyid?id="+id
     $.getJSON(url,function(data){
+        console.log(data)
         if(data['code']==0){
             data = data['result']
-            idcs = data['idcs']
-            console.log(data)
             $('#id').val(data['id'])
             $('#name').val(data['name'])
             //$('#idc_id').val('fangtao')
-            $('#u_num').val(data['n_num'])
+            $('#u_num').val(data['u_num'])
             $('#power').val(data['power'])
         }else{
             alert(data['errmsg'])
