@@ -20,6 +20,7 @@ def get_list(table,fields,condition=None):
             res = [dict((k,row[i]) for i,k in enumerate(fields)) for row in result]
     else:
         sql = "select %s from %s where %s" % (','.join(fields),table,condition)
+        print "sql=",sql 
         cur.execute(sql)
         result = cur.fetchone()
         if result:

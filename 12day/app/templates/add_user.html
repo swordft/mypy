@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block breadcrumb %}
+创建用户
+{% endblock %}
+
+{% block main %}
+
+<div class="col-sm-12">
+    <div class="ibox-content">
+        <div class="" id="content_start">
+            <form id="addUserForm" method="post" class="form-horizontal" action="">
+                <!--<input type="hidden" name="cabinet_id" id="cabinet_id">-->
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="name">用户名</label>
+                    <div class="col-md-9">
+                        <input type="text" name="name" maxlength="128" class="form-control" placeholder="用户名" title="* required" required id="name" />
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="name_cn">姓名</label>
+                    <div class="col-md-9">
+                        <input type="text" name="name_cn" maxlength="128" class="form-control" placeholder="姓名" title="* required" required id="name_cn" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="email">邮件</label>
+                    <div class="col-md-9">
+                        <input type="text" name="email" maxlength="128" class="form-control" placeholder="邮件" title="* required" required id="email" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="password">密码</label>
+                    <div class="col-md-9">
+                        <input type="text" name="password" maxlength="128" class="form-control" placeholder="密码" title="* required" required id="password" />
+                    </div>
+                </div>
+    
+                {% if info['role'] == "admin" %}
+                <div class="form-group"><label class="col-md-2 control-label" for="role">角色</label>
+                    <div class="col-md-9">
+                        <select name="role" class="form-control" title="" id="role">
+                            <option value="admin">管理员</option>
+                            <option value="common_user" selected>用户</option>
+                        </select>
+                    </div>
+                </div>
+     
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="status">状态</label>
+                    <div class="col-md-9">
+                        <select name="status" class="form-control" title="" id="status">
+                            <option value="1">锁定</option>
+                            <option value="0" selected>正常</option>
+                        </select>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="mobile">手机</label>
+                    <div class="col-md-9">
+                        <input type="text" name="mobile" maxlength="128" class="form-control" placeholder="联系电话" title="* required" required id="mobile" />
+                    </div>
+                </div>
+
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-2">
+                        <a class="btn btn-white" type="reset">重置</a>
+                        <a id="addbtn" class="btn btn-primary">提交</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function(){
+    $('#addbtn').on('click',function(){
+        var str = $('#addUserForm').serialize()
+        $.post("/add_user",str,function(data){
+            data = JSON.parse(data)
+            console.log(data)
+            if (data['code'] == '0'){
+                swal({
+                    title:"创建成功",
+                    type:"success",
+                    confirmButtonText:"OK"},function(){
+                        location.href="/userlist"
+                    })
+            }else{
+                swal({
+                    title:"创建失败",
+                    type:"error",
+                    confirmButtonText:"退出"
+                }) 
+            }
+        })
+        return false
+    })
+})
+
+/*$('#addUserForm').validator({
+    rules: {
+        // 使用正则表达式定义规则
+        mobile: [/^1[3-9]\d{9}$/,"请填写有效的手机号"],
+        chinese: [/^[\u0391-\uFFE5]{2,4}$/, "请填写2-4个中文字符"]
+           },
+
+    fields:{
+        'name': "required;length(6~)",
+        'name_cn': "required,chinese",
+        'email': "required;email",
+        'password': "required;length(6~)",
+        'role': "required",
+        'status': "required",
+        'mobile': "required;mobile"
+    }
+});*/
+
+</script>
+{% endblock %}

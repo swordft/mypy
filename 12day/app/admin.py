@@ -66,11 +66,15 @@ def userlist():
 def add_user():
     if not session.get('name',None):
         return redirect('/login')
+    if request.method == 'GET':
+        id = request.args.get('id')
+        return render_template('add_user.html',info=session)
     if request.method == "POST":
 	data = dict((k,v[0]) for k,v in dict(request.form).items())
         data['password'] = hashlib.md5(data['password']+salt).hexdigest()    # 对密码进行md5加密
         fields = ['name','name_cn','password','mobile','email','role','status']
-        res = get_list('users',fields,data['name'])
+        condition = 'name="%s"' % data['name']
+        res = get_list('users',fields,condition)
         if res:
             return json.dumps({'code':'1','errmsg':"username duplicate,please choice another!"})
         try:
