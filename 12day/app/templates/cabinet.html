@@ -59,8 +59,8 @@
                     <label class="col-md-2 control-label" for="idc_id">所在机房</label>
                     <div class="col-md-9">
                         <select name="idc_id" class="form-control" title="" id="idc_id">
-                        {% for idc in idc_names %}
-                            <option value="{{ idc }}">{{ idc }}</option>
+                        {% for idc in idcs %}
+                            <option value="{{ idc }}">{{ idcs.idc }}</option>
                         {% endfor %}
                         </select>
                     </div>
@@ -127,7 +127,7 @@ $(".update").click(function(){
             data = data['result']
             $('#id').val(data['id'])
             $('#name').val(data['name'])
-            //$('#idc_id').val('fangtao')
+            //$('#idc_id'.option[value=data['idc_id']
             $('#u_num').val(data['u_num'])
             $('#power').val(data['power'])
         }else{

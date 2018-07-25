@@ -29,10 +29,12 @@ def cabinet():
     role = session.get('role')
     cabinets = get_list('cabinet',fields_cabinet)
     idcs = dict([(i['id'],i['name_cn']) for i in get_list('idc',fields_idc)])
+    print "idcs=",idcs
     idc_names = idcs.values()
     for cab in cabinets:
         if cab['idc_id'] in idcs:
             cab['idc_id'] = idcs[cab['idc_id']]
+    print "idcs=",idcs
     return render_template('cabinet.html',idc_names=idc_names,idcs=idcs,data=cabinets,info=session)
 
 @app.route('/server')
@@ -250,6 +252,7 @@ def cabinet_getbyid():
     condition = 'id="%s"' % id
     try:
         data = get_list('cabinet',fields_cabinet,condition)
+        print "data=",data
         return json.dumps({"code":0,"result":data})
     except:
         return json.dumps({"code":1,"errmsg":"select userinfo failed"})
